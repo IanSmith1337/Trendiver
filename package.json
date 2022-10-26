@@ -1,6 +1,6 @@
 {
   "name": "trendiver",
-  "version": "0.0.6",
+  "version": "0.0.0",
   "description": "A trend-visualization resource.",
   "main": "app/main.js",
   "scripts": {
@@ -73,7 +73,6 @@
           }
         }
       ]
-    },
-    "packagerConfig": {}
+    }
   }
 }
