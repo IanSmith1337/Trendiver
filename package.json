@@ -1,6 +1,6 @@
 {
   "name": "trendiver",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A trend-visualization resource.",
   "main": "main.js",
   "scripts": {
