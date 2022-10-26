@@ -1,0 +1,64 @@
+name: Build & Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build_for_linux:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions/setup-node@master
+      - name: install linux dependencies
+        run: npm install
+      - name: import into eforge
+        run: npx electron-forge import
+      - name: build
+        run: npm run make
+      - name: publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run publish
+
+  build_for_mac:
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions/setup-node@master
+      - name: install dependencies
+        run: npm install
+      - name: import into eforge
+        run: npx electron-forge import
+      - name: build
+        run: npm run make
+      - name: publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run publish
+
+  build_for_win:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions/setup-node@master
+      - name: install dependencies
+        run: npm install
+      - name: import into eforge
+        run: npx electron-forge import
+      - name: build
+        run: npm run make
+      - name: publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run publish

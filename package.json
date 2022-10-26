@@ -1,0 +1,79 @@
+{
+  "name": "trendiver",
+  "version": "0.0.6",
+  "description": "A trend-visualization resource.",
+  "main": "app/main.js",
+  "scripts": {
+    "test": "echo \"Still have to make unit tests.\"",
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IanSmith1337/Trendiver.git"
+  },
+  "keywords": [
+    "Trends",
+    "Trend",
+    "Twitter",
+    "Social Media",
+    "Hashtags",
+    "Data Visualization"
+  ],
+  "author": "Ian Smith",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/IanSmith1337/Trendiver/issues"
+  },
+  "homepage": "https://github.com/IanSmith1337/Trendiver#readme",
+  "devDependencies": {
+    "@electron-forge/cli": "^6.0.0-beta.66",
+    "@electron-forge/maker-deb": "^6.0.0-beta.66",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.66",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.66",
+    "@electron-forge/maker-dmg": "^6.0.0-beta.66",
+    "@electron-forge/publisher-github": "^6.0.0-beta.66",
+    "electron": "^20.1.4"
+  },
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.0"
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {},
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-dmg",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {}
+        }
+      ],
+      "publishers": [
+        {
+          "name": "@electron-forge/publisher-github",
+          "config": {
+            "repository": {
+              "owner": "IanSmith1337",
+              "name": "Trendiver"
+            },
+            "draft": true
+          }
+        }
+      ]
+    },
+    "packagerConfig": {}
+  }
+}
