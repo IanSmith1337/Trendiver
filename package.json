@@ -2,7 +2,7 @@
   "name": "trendiver",
   "version": "0.0.1",
   "description": "A trend-visualization resource.",
-  "main": "app/main.js",
+  "main": "main.js",
   "scripts": {
     "test": "echo \"Still have to make unit tests.\"",
     "start": "electron-forge start",
