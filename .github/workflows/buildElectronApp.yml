@@ -13,8 +13,6 @@ jobs:
       - uses: actions/setup-node@master
       - name: install linux dependencies
         run: npm install
-      - name: import into eforge
-        run: npx electron-forge import
       - name: build app
         run: npm run make
       - name: publish
@@ -29,8 +27,6 @@ jobs:
       - uses: actions/setup-node@master
       - name: install dependencies
         run: npm install
-      - name: import into eforge
-        run: npx electron-forge import
       - name: build
         run: npm run make
       - name: publish
@@ -45,8 +41,6 @@ jobs:
       - uses: actions/setup-node@master
       - name: install dependencies
         run: npm install
-      - name: import into eforge
-        run: npx electron-forge import
       - name: build
         run: npm run make
       - name: publish
