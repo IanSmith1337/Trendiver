@@ -15,7 +15,7 @@ jobs:
         run: npm install
       - name: import into eforge
         run: npx electron-forge import
-      - name: build
+      - name: build app
         run: npm run make
       - name: publish
         env:

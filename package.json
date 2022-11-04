@@ -2,7 +2,7 @@
   "name": "trendiver",
   "version": "0.0.2",
   "description": "A trend-visualization resource.",
-  "main": "main.js",
+  "main": ".webpack/main",
   "scripts": {
     "test": "echo \"Still have to make unit tests.\"",
     "start": "electron-forge start",
@@ -29,50 +29,25 @@
   },
   "homepage": "https://github.com/IanSmith1337/Trendiver#readme",
   "devDependencies": {
-    "@electron-forge/cli": "^6.0.0-beta.66",
-    "@electron-forge/maker-deb": "^6.0.0-beta.66",
-    "@electron-forge/maker-rpm": "^6.0.0-beta.66",
-    "@electron-forge/maker-squirrel": "^6.0.0-beta.66",
     "@electron-forge/maker-dmg": "^6.0.0-beta.66",
     "@electron-forge/publisher-github": "^6.0.0-beta.66",
-    "electron": "^20.1.4"
+    "electron-squirrel-startup": "^1.0.0",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0",
+    "@electron-forge/cli": "^6.0.0",
+    "@electron-forge/maker-deb": "^6.0.0",
+    "@electron-forge/maker-rpm": "^6.0.0",
+    "@electron-forge/maker-squirrel": "^6.0.0",
+    "@electron-forge/maker-zip": "^6.0.0",
+    "@electron-forge/plugin-webpack": "^6.0.0",
+    "@vercel/webpack-asset-relocator-loader": "^1.7.3",
+    "css-loader": "^6.7.1",
+    "electron": "21.2.2",
+    "node-loader": "^2.0.0",
+    "style-loader": "^3.3.1"
   },
   "dependencies": {
+    "firebase": "^9.13.0",
     "electron-squirrel-startup": "^1.0.0"
-  },
-  "config": {
-    "forge": {
-      "packagerConfig": {},
-      "makers": [
-        {
-          "name": "@electron-forge/maker-squirrel",
-          "config": {}
-        },
-        {
-          "name": "@electron-forge/maker-dmg",
-          "config": {}
-        },
-        {
-          "name": "@electron-forge/maker-deb",
-          "config": {}
-        },
-        {
-          "name": "@electron-forge/maker-rpm",
-          "config": {}
-        }
-      ],
-      "publishers": [
-        {
-          "name": "@electron-forge/publisher-github",
-          "config": {
-            "repository": {
-              "owner": "IanSmith1337",
-              "name": "Trendiver"
-            },
-            "draft": true
-          }
-        }
-      ]
-    }
   }
 }
