@@ -13,9 +13,7 @@ jobs:
       - uses: actions/setup-node@master
       - name: install linux dependencies
         run: npm install
-      - name: build app
-        run: npm run make
-      - name: publish
+      - name: make and publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run publish
@@ -27,9 +25,7 @@ jobs:
       - uses: actions/setup-node@master
       - name: install dependencies
         run: npm install
-      - name: build
-        run: npm run make
-      - name: publish
+      - name: make and publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run publish
@@ -41,9 +37,7 @@ jobs:
       - uses: actions/setup-node@master
       - name: install dependencies
         run: npm install
-      - name: build
-        run: npm run make
-      - name: publish
+      - name: make and publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run publish
