@@ -80,7 +80,7 @@ const listener = onSnapshot(q, (snapshot) => {
   }
 })
 
-async function update() {
+document.getElementById('UpdateButton').onclick = async function () {
   const querySnapshot = await getDocs(collection(DB, 'cycles'))
   const docRef = querySnapshot.docs[querySnapshot.docs.length - 1].ref
   const docData = await getDoc(docRef)
