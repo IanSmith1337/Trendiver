@@ -30,7 +30,7 @@ import './index.css'
 
 import { initializeApp } from 'firebase/app'
 
-import { collection, getDocs, getFirestore } from 'firebase/firestore'
+import { collection, query, onSnapshot, getFirestore } from 'firebase/firestore'
 
 const firebaseConfig = {
   apiKey: 'AIzaSyA3gUrQZvp23tQINOnr764EMPTczPlYbUw',
@@ -57,16 +57,17 @@ console.log(
   '👋 This message is being logged by "renderer.js", included via webpack',
 )
 
-async function getCycles() {
-  const querySnapshot = await getDocs(collection(DB, 'cycles'))
-  querySnapshot.forEach((doc) => {
-    // doc.data() is never undefined for query doc snapshots
-    console.log(doc.id, ' => ', doc.data())
-  })
-}
-
-getCycles()
 const listRoot = document.getElementById('tweetList')
-const node = document.createElement('li')
-const textnode = document.createTextNode('nothing here yet...')
-listRoot.appendChild(node.appendChild(textnode))
+
+var isFirst = false
+
+const q = query(collection(DB, 'cycles'))
+const listener = onSnapshot(q, (snapshot) => {
+  if (snapshot.docChanges().length == 1) {
+    snapshot.docChanges().forEach((change) => {
+      if (change.type === 'added') {
+        console.log(change.doc.data())
+      }
+    })
+  }
+})
