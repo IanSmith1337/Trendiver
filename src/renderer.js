@@ -30,7 +30,14 @@ import './index.css'
 
 import { initializeApp } from 'firebase/app'
 
-import { collection, query, onSnapshot, getFirestore } from 'firebase/firestore'
+import {
+  collection,
+  query,
+  onSnapshot,
+  getFirestore,
+  getDocs,
+  getDoc,
+} from 'firebase/firestore'
 
 const firebaseConfig = {
   apiKey: 'AIzaSyA3gUrQZvp23tQINOnr764EMPTczPlYbUw',
@@ -66,8 +73,17 @@ const listener = onSnapshot(q, (snapshot) => {
   if (snapshot.docChanges().length == 1) {
     snapshot.docChanges().forEach((change) => {
       if (change.type === 'added') {
+        console.log(change.doc.id)
         console.log(change.doc.data())
       }
     })
   }
 })
+
+async function update() {
+  const querySnapshot = await getDocs(collection(DB, 'cycles'))
+  const docRef = querySnapshot.docs[querySnapshot.docs.length - 1].ref
+  const docData = await getDoc(docRef)
+  console.log(docData.id)
+  console.log(docData.data())
+}
