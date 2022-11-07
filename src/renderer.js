@@ -32,11 +32,18 @@ import { initializeApp } from 'firebase/app'
 
 import {
   collection,
-  query,
   onSnapshot,
   getFirestore,
   getDocs,
   getDoc,
+  doc,
+  where,
+  limitToLast,
+  query,
+  orderBy,
+  documentId,
+  limit,
+  FieldPath,
 } from 'firebase/firestore'
 
 const firebaseConfig = {
@@ -60,30 +67,39 @@ const firebaseConfig = {
 const FBapp = initializeApp(firebaseConfig)
 const DB = getFirestore(FBapp)
 
-console.log(
-  '👋 This message is being logged by "renderer.js", included via webpack',
-)
+console.log('Renderer loaded.')
 
 const listRoot = document.getElementById('tweetList')
+var originalMap = new Map()
+var sortedMap = new Map()
 
-var isFirst = false
+document.getElementById('UpdateButton').onclick = async function () {
+  const q = new query(
+    collection(DB, 'cycles'),
+    where('Time', '>=', Date.now() / 1000),
+    limit(1),
+  )
+  const querySnapshot = await getDocs(q)
+  console.log(querySnapshot.docs[0].id)
+  const docData = querySnapshot.docs[0].data()
+  console.log(docData)
+  for (const entity in docData) {
+    if (Object.hasOwnProperty.call(docData, entity)) {
+      const element = docData[entity]
+      console.log(docData.entity + ': ' + element)
+    }
+  }
+}
 
-const q = query(collection(DB, 'cycles'))
-const listener = onSnapshot(q, (snapshot) => {
+const q = new Query(collection(DB, 'cycles'))
+/*const listener = onSnapshot(q, (snapshot) => {
   if (snapshot.docChanges().length == 1) {
     snapshot.docChanges().forEach((change) => {
       if (change.type === 'added') {
-        console.log(change.doc.id)
-        console.log(change.doc.data())
+        for (let i = 0; i < change.doc.data().length; i++) {
+          console.log(change.doc.data()[i])
+        }
       }
     })
   }
-})
-
-document.getElementById('UpdateButton').onclick = async function () {
-  const querySnapshot = await getDocs(collection(DB, 'cycles'))
-  const docRef = querySnapshot.docs[querySnapshot.docs.length - 1].ref
-  const docData = await getDoc(docRef)
-  console.log(docData.id)
-  console.log(docData.data())
-}
+})*/
