@@ -17,6 +17,24 @@
     <h1>Trendiver</h1>
     <br />
     <h3>Hello!</h3>
-    <button id="UpdateButton">Load list</button>
+    <div id="controlPanelUpper">
+      <button id="UpdateButton5">5 minutes</button>
+      <button id="UpdateButton15">15 minutes</button>
+      <button id="UpdateButton30">30 minutes</button>
+      <button id="UpdateButton60">1 hour</button>
+      <button id="UpdateButton180">3 hours</button>
+      <button id="UpdateButton360">6 hours</button>
+      <button id="UpdateButton720">12 hours</button>
+      <button id="UpdateButton1440">24 hours</button>
+      <br />
+      <label for="itemsToDisplay">Items per page:</label>
+      <select id="itemsToDisplay">
+        <option value="25">25</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+      </select>
+    </div>
+    <div id="listDiv"></div>
+    <div id="controlPanelLower"></div>
   </body>
 </html>

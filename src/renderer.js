@@ -45,6 +45,7 @@ import {
   limit,
   FieldPath,
   exists,
+  endAt,
 } from 'firebase/firestore'
 import { map } from '@firebase/util'
 
@@ -66,16 +67,92 @@ const firebaseConfig = {
   measurementId: 'G-CRE91QKHLR',
 }
 
+// Constant Initialization:
 const FBapp = initializeApp(firebaseConfig)
 const DB = getFirestore(FBapp)
 const listRoot = document.createElement('ol')
-const idNode = document.createAttribute('id')
-idNode.value = 'tweetList'
-var executing = false
-var currentL = 1
-var q
+const idNodeList = document.createAttribute('id')
+const idNodeNext = document.createAttribute('id')
+const idNodePrev = document.createAttribute('id')
+const nextButton = document.createElement('button')
+const prevButton = document.createElement('button')
+const textNB = document.createTextNode('Next')
+const textPB = document.createTextNode('Previous')
+const pageSizeSelector = document.getElementById('itemsToDisplay')
 
-function setLength(l) {
+// Variable initialization:
+var executing = false
+var firstTime = true
+var currentPage = 0
+var pageSize
+var q
+var unsubscribe
+var sorted
+
+// HTML Document Setup
+nextButton.appendChild(textNB)
+prevButton.appendChild(textPB)
+idNodeList.value = 'tweetList'
+idNodeNext.value = 'nextButton'
+idNodePrev.value = 'prevButton'
+nextButton.attributes.setNamedItem(idNodeNext)
+prevButton.attributes.setNamedItem(idNodePrev)
+
+// Events
+
+window.onload = function () {
+  pageSize = pageSizeSelector.value
+  console.log('Renderer loaded.')
+}
+
+pageSizeSelector.onchange = function () {
+  pageSize = pageSizeSelector.value
+  if (sorted.size > 0 && typeof sorted !== 'undefined' && sorted !== null) {
+    updateList(sorted, currentPage)
+  }
+}
+
+document.getElementById('UpdateButton5').onclick = function () {
+  setTimeSpan(1)
+  callDBListener()
+}
+
+document.getElementById('UpdateButton15').onclick = function () {
+  setTimeSpan(3)
+  callDBListener()
+}
+
+document.getElementById('UpdateButton30').onclick = function () {
+  setTimeSpan(6)
+  callDBListener()
+}
+
+document.getElementById('UpdateButton60').onclick = function () {
+  setTimeSpan(12)
+  callDBListener()
+}
+
+document.getElementById('UpdateButton180').onclick = function () {
+  setTimeSpan(36)
+  callDBListener()
+}
+
+document.getElementById('UpdateButton360').onclick = function () {
+  setTimeSpan(72)
+  callDBListener()
+}
+
+document.getElementById('UpdateButton720').onclick = function () {
+  setTimeSpan(144)
+  callDBListener()
+}
+
+document.getElementById('UpdateButton1440').onclick = function () {
+  setTimeSpan(288)
+  callDBListener()
+}
+
+function setTimeSpan(dCount) {
   // Time controls for document retreival.
   // 1 = 5 minutes
   // 3 = 15 minutes
@@ -85,16 +162,29 @@ function setLength(l) {
   // 72 = 6 hours
   // 144 = 12 hours
   // 288 = 1 day
-  q = new query(collection(DB, 'cycles'), orderBy('Time', 'desc'), limit(l))
+  q = new query(
+    collection(DB, 'cycles'),
+    orderBy('Time', 'desc'),
+    limit(dCount),
+  )
 }
 
-async function callDB() {
+async function callDBListener() {
   var originalMap = new Map()
   if (!executing) {
     executing = true
-    const querySnapshot = await getDocs(q)
-    if (querySnapshot.docs.length > 0) {
-      querySnapshot.docs.forEach((doc) => {
+    unsubscribe = onSnapshot(q, (qs) => {
+      if (!firstTime) {
+        qs.docChanges().forEach((doc) => {
+          if (doc.type === 'added') {
+            console.log('A new doc was added.')
+          }
+        })
+      } else {
+        firstTime = false
+        console.log('Listener created.')
+      }
+      qs.forEach((doc) => {
         const CDdata = doc.data()
         for (const entity in CDdata) {
           if (Object.hasOwnProperty.call(CDdata, entity)) {
@@ -110,11 +200,20 @@ async function callDB() {
         }
       })
       console.log('Finished gathering data.')
-      const sorted = createSortedMap(originalMap)
+      sorted = createSortedMap(originalMap)
       console.log('Map created.')
-      updateList(sorted)
+      updateList(sorted, 0)
+      console.log('Done.')
+    })
+  } else {
+    if (typeof unsubscribe !== 'undefined' && unsubscribe !== null) {
+      unsubscribe()
     }
+    currentPage = 0
     executing = false
+    firstTime = true
+    console.log('Unsubscribed and reset')
+    callDBListener()
   }
 }
 
@@ -123,7 +222,7 @@ function createSortedMap(starting) {
   return new Map([...starting.entries()].sort((a, b) => b[1] - a[1]))
 }
 
-function updateList(sortedEntities) {
+function updateList(sortedEntities, page) {
   console.log('Cleaning list...')
   if (document.getElementById('tweetList') != null) {
     document.getElementById('tweetList').remove()
@@ -131,64 +230,54 @@ function updateList(sortedEntities) {
       listRoot.removeChild(listRoot.firstChild)
     }
     document.body.appendChild(listRoot)
-    listRoot.attributes.setNamedItem(idNode)
+    listRoot.attributes.setNamedItem(idNodeList)
   } else {
     document.body.appendChild(listRoot)
-    listRoot.attributes.setNamedItem(idNode)
+    listRoot.attributes.setNamedItem(idNodeList)
   }
   console.log('Filling...')
-  var count = 0
-  sortedEntities.forEach((item, index) => {
-    if (count < 20) {
+  if (sortedEntities.size > pageSize || page > 1) {
+    const startPoint = page * pageSize
+    const endPoint =
+      sortedEntities.size >= (page + 1) * pageSize
+        ? (page + 1) * pageSize
+        : sortedEntities.size - 1
+    for (var i = startPoint; i < endPoint; i++) {
+      const index = Array.from(sortedEntities.keys())[i]
+      const item = sortedEntities.get(index)
+      const numberedItem = document.createElement('li')
+      const NIText = document.createTextNode(index + ': ' + item)
+      const numVal = document.createAttribute('value')
+      numVal.value = i + 1
+      listRoot.appendChild(numberedItem)
+      numberedItem.appendChild(NIText)
+      numberedItem.attributes.setNamedItem(numVal)
+    }
+    document.body.appendChild(nextButton)
+    if (page >= 1) {
+      document.body.appendChild(prevButton)
+      if (prevButton.getAttribute('listener') == null) {
+        prevButton.addEventListener('click', function () {
+          currentPage--
+          updateList(sorted, currentPage)
+        })
+        prevButton.attributes.setNamedItem(document.createAttribute('listener'))
+      }
+    }
+    if (nextButton.getAttribute('listener') == null) {
+      nextButton.addEventListener('click', function () {
+        currentPage++
+        updateList(sorted, currentPage)
+      })
+      nextButton.attributes.setNamedItem(document.createAttribute('listener'))
+    }
+  } else {
+    sortedEntities.forEach((item, index) => {
       const numberedItem = document.createElement('li')
       const NIText = document.createTextNode(index + ': ' + item)
       listRoot.appendChild(numberedItem)
       numberedItem.appendChild(NIText)
-      count++
-    }
-  })
-}
-
-document.getElementById('UpdateButton').onclick = function () {
-  setLength(currentL)
-  callDB()
-  switch (currentL) {
-    case 1:
-      currentL = 3
-      document.getElementById('UpdateButton').textContent = '5 minutes'
-      break
-    case 3:
-      currentL = 6
-      document.getElementById('UpdateButton').textContent = '15 minutes'
-      break
-    case 6:
-      currentL = 12
-      document.getElementById('UpdateButton').textContent = '30 minutes'
-      break
-    case 12:
-      currentL = 36
-      document.getElementById('UpdateButton').textContent = '1 hour'
-      break
-    case 36:
-      currentL = 72
-      document.getElementById('UpdateButton').textContent = '3 hours'
-      break
-    case 72:
-      currentL = 144
-      document.getElementById('UpdateButton').textContent = '6 hours'
-      break
-    case 144:
-      currentL = 288
-      document.getElementById('UpdateButton').textContent = '12 hours'
-      break
-    case 288:
-      currentL = 1
-      document.getElementById('UpdateButton').textContent = '24 hours'
-      break
-    default:
-      currentL = 1
-      break
+    })
   }
+  console.log('Fill complete.')
 }
-
-console.log('Renderer loaded.')
