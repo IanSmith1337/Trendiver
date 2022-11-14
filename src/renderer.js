@@ -170,10 +170,10 @@ function setTimeSpan(dCount) {
 }
 
 async function callDBListener() {
-  var originalMap = new Map()
   if (!executing) {
     executing = true
     unsubscribe = onSnapshot(q, (qs) => {
+      var originalMap = new Map()
       if (!firstTime) {
         qs.docChanges().forEach((doc) => {
           if (doc.type === 'added') {
