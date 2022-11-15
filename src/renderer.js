@@ -84,10 +84,14 @@ const pageSizeSelector = document.getElementById('itemsToDisplay')
 var executing = false
 var firstTime = true
 var currentPage = 0
+var addMap
+var subMap
+var originalMap
 var pageSize
 var q
 var unsubscribe
 var sorted
+var prevDoc
 
 // HTML Document Setup
 nextButton.appendChild(textNB)
@@ -170,23 +174,45 @@ function setTimeSpan(dCount) {
 }
 
 async function callDBListener() {
-  var originalMap = new Map()
   if (!executing) {
     executing = true
+    console.log('Attaching listener...')
     unsubscribe = onSnapshot(q, (qs) => {
-      var changeMap = new Map()
+      originalMap = new Map()
+      addMap = new Map()
+      subMap = new Map()
       if (!firstTime) {
-        qs.docChanges().forEach((doc) => {
-          if (doc.type === 'added') {
-            const CDdata = doc.data()
-            for (const entity in CDdata) {
-              if (Object.hasOwnProperty.call(CDdata, entity)) {
-                const element = CDdata[entity]
+        qs.docChanges().forEach((change) => {
+          console.log('Add: ' + change.doc.id)
+          if (change.type === 'added') {
+            if (prevDoc != change.doc.id) {
+              const changeDocData = change.doc.data()
+              for (const entity in changeDocData) {
+                if (Object.hasOwnProperty.call(changeDocData, entity)) {
+                  const element = changeDocData[entity]
+                  if (entity !== 'Time') {
+                    if (addMap.has(entity)) {
+                      addMap.set(entity, addMap.get(entity) + element)
+                    } else {
+                      addMap.set(entity, element)
+                    }
+                  }
+                }
+              }
+              prevDoc = change.doc.id
+            }
+          }
+          if (change.type === 'removed') {
+            console.log('Remove: ' + change.doc.id)
+            const changeDocData = change.doc.data()
+            for (const entity in changeDocData) {
+              if (Object.hasOwnProperty.call(changeDocData, entity)) {
+                const element = changeDocData[entity]
                 if (entity !== 'Time') {
-                  if (changeMap.has(entity)) {
-                    changeMap.set(entity, changeMap.get(entity) + element)
+                  if (subMap.has(entity)) {
+                    subMap.set(entity, subMap.get(entity) + element)
                   } else {
-                    changeMap.set(entity, element)
+                    subMap.set(entity, element)
                   }
                 }
               }
@@ -194,33 +220,34 @@ async function callDBListener() {
           }
         })
       } else {
+        qs.docChanges().forEach((change) => {
+          console.log('Add: ' + change.doc.id)
+          prevDoc = change.doc.id
+        })
+        firstTime = false
         console.log('Listener created.')
       }
       qs.forEach((doc) => {
-        const CDdata = doc.data()
-        for (const entity in CDdata) {
-          if (Object.hasOwnProperty.call(CDdata, entity)) {
-            const element = CDdata[entity]
+        const currentDocData = doc.data()
+        for (const entity in currentDocData) {
+          if (Object.hasOwnProperty.call(currentDocData, entity)) {
+            const element = currentDocData[entity]
             if (entity !== 'Time') {
-              if (firstTime) {
-                if (originalMap.has(entity)) {
-                  originalMap.set(entity, originalMap.get(entity) + element)
-                } else {
-                  originalMap.set(entity, element)
-                }
+              if (originalMap.has(entity)) {
+                originalMap.set(entity, originalMap.get(entity) + element)
               } else {
+                originalMap.set(entity, element)
               }
             }
           }
         }
       })
-      if (firstTime) {
-        firstTime = false
-      }
       console.log('Finished gathering data.')
       sorted = createSortedMap(originalMap)
       console.log('Map created.')
-      updateList(sorted, changeMap, 0)
+      console.log(addMap)
+      console.log(subMap)
+      updateList(sorted, addMap, subMap, 0)
       console.log('Done.')
     })
   } else {
@@ -240,7 +267,7 @@ function createSortedMap(starting) {
   return new Map([...starting.entries()].sort((a, b) => b[1] - a[1]))
 }
 
-function updateList(sortedEntities, changes, page) {
+function updateList(sortedEntities, adds, subs, page) {
   console.log('Cleaning list...')
   if (document.getElementById('tweetList') != null) {
     document.getElementById('tweetList').remove()
@@ -260,23 +287,63 @@ function updateList(sortedEntities, changes, page) {
       sortedEntities.size >= (page + 1) * pageSize
         ? (page + 1) * pageSize
         : sortedEntities.size - 1
+    var deltaPos = 0
+    var deltaNeg = 0
     for (var i = startPoint; i < endPoint; i++) {
       const index = Array.from(sortedEntities.keys())[i]
       const item = sortedEntities.get(index)
       const numberedItem = document.createElement('li')
-      if (changes.get(index)) {
-        const NITextChanges = document.createTextNode(
-          index +
-            ': ' +
-            item +
-            ' (' +
-            (changes.get(index) > item
-              ? '+' + (changes.get(index) - item)
-              : '-' + (item - changes.get(index))) +
-            ')',
-        )
-        listRoot.appendChild(numberedItem)
-        numberedItem.appendChild(NITextChanges)
+      if (adds.get(index) || subs.get(index)) {
+        if (adds.get(index)) {
+          deltaPos += adds.get(index)
+        }
+        if (subs.get(index)) {
+          deltaNeg += subs.get(index)
+        }
+        if (deltaPos > deltaNeg) {
+          console.log(
+            'Item: ' +
+              index +
+              ', (+)' +
+              (deltaPos - deltaNeg) +
+              ', D+: ' +
+              deltaPos +
+              ', D-: ' +
+              deltaNeg,
+          )
+          const NITextChanges = document.createTextNode(
+            index + ': ' + item + ' (+' + (deltaPos - deltaNeg) + ')',
+          )
+          listRoot.appendChild(numberedItem)
+          numberedItem.appendChild(NITextChanges)
+        } else {
+          if (deltaNeg > deltaPos) {
+            console.log(
+              'Item: ' +
+                index +
+                ', (-)' +
+                (deltaPos - deltaNeg) +
+                ', D+: ' +
+                deltaPos +
+                ', D-: ' +
+                deltaNeg,
+            )
+            const NITextChanges = document.createTextNode(
+              index + ': ' + item + ' (-' + (deltaNeg - deltaPos) + ')',
+            )
+            listRoot.appendChild(numberedItem)
+            numberedItem.appendChild(NITextChanges)
+          } else {
+            console.log(
+              'Item: ' + index + ', (~), D+: ' + deltaPos + ', D-: ' + deltaNeg,
+            )
+            const NITextNoChange = document.createTextNode(index + ': ' + item)
+            listRoot.appendChild(numberedItem)
+            numberedItem.appendChild(NITextNoChange)
+          }
+        }
+        deltaNeg = 0
+        deltaPos = 0
       } else {
         const NITextNoChange = document.createTextNode(index + ': ' + item)
         listRoot.appendChild(numberedItem)
@@ -286,21 +353,21 @@ function updateList(sortedEntities, changes, page) {
       numVal.value = i + 1
       numberedItem.attributes.setNamedItem(numVal)
     }
-    document.body.appendChild(nextButton)
     if (page >= 1) {
       document.body.appendChild(prevButton)
       if (prevButton.getAttribute('listener') == null) {
         prevButton.addEventListener('click', function () {
           currentPage--
-          updateList(sorted, currentPage)
+          updateList(sorted, addMap, subMap, currentPage)
         })
         prevButton.attributes.setNamedItem(document.createAttribute('listener'))
       }
     }
+    document.body.appendChild(nextButton)
     if (nextButton.getAttribute('listener') == null) {
       nextButton.addEventListener('click', function () {
         currentPage++
-        updateList(sorted, currentPage)
+        updateList(sorted, addMap, subMap, currentPage)
       })
       nextButton.attributes.setNamedItem(document.createAttribute('listener'))
     }
