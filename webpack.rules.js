@@ -15,5 +15,14 @@ module.exports = [
         outputAssetBase: 'native_modules',
       },
     },
+  },{
+    test: /\.jsx?$/,
+    use: {
+      loader: 'babel-loader',
+      options: {
+        exclude: /node_modules/,
+        presets: ['@babel/preset-react']
+      }
+    }
   },
 ]
