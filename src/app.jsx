@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import ControlPanel from './components/ControlPanel.jsx'
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
-import './index.css'
+import './style/index.css'
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 const config = {
@@ -28,14 +28,12 @@ const DB = getFirestore(FBapp)
 
 function render() {
   root.render(
-    <React.StrictMode>
-      <div>
-        <header>
-          <h1>Trendiver</h1>
-        </header>
-        <ControlPanel DB={DB} />
-      </div>
-    </React.StrictMode>,
+    <div>
+      <header>
+        <h1>Trendiver</h1>
+      </header>
+      <ControlPanel DB={DB} />
+    </div>,
   )
 }
 

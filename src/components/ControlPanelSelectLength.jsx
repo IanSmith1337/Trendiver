@@ -16,6 +16,7 @@ class ControlPanelSelectLength extends React.Component {
         <label>
           Get hashtags and mentions from the last<span> </span>
           <select id="Length" onChange={this.handleChange}>
+            <option value="0">Select an amount...</option>
             <option value="5">5 minutes</option>
             <option value="15">15 minutes</option>
             <option value="30">30 minutes</option>
