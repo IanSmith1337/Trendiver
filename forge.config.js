@@ -29,7 +29,7 @@ module.exports = {
       config: {
         mainConfig: './webpack.main.config.js',
         devContentSecurityPolicy:
-          "script-src 'self' https://cdn.firebase.com https://*.firebaseio.com 'unsafe-eval' 'unsafe-inline'; object-src 'self'",
+          "script-src 'self' https://cdn.firebase.com https://*.firebaseio.com https://cdn.jsdelivr.net 'unsafe-eval' 'unsafe-inline'; object-src 'self'",
         renderer: {
           config: './webpack.renderer.config.js',
           entryPoints: [

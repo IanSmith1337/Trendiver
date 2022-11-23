@@ -1,21 +1,13 @@
 import React from 'react'
-import ReactDOM from 'react-dom/client'
+import ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import ControlPanel from './components/ControlPanel.jsx'
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
-import {
-  Container,
-  Nav,
-  Navbar,
-  Form,
-  InputGroup,
-  Button,
-} from 'react-bootstrap'
+import * as reactBootstrap from 'react-bootstrap'
 import '../src/style/index.css'
-import 'bootstrap/dist/css/bootstrap.min.css'
-import { createPortal } from 'react-dom'
 
-const root = ReactDOM.createRoot(document.getElementById('root'))
+const root = createRoot(document.getElementById('root'))
 const config = {
   apiKey: 'AIzaSyCupSjMsmiWQqQRc3safixumPHi7c2MXv4',
 
@@ -82,16 +74,15 @@ const DB = getFirestore(FBapp)
 */
 }
 
-createPortal(
-  <Navbar bg="dark" expand="lg" sticky="top">
-    <Container>
-      <Navbar.Brand href="#">Trendiver</Navbar.Brand>
-    </Container>
-  </Navbar>,
-  document.getElementById('Nav'),
-)
 root.render(
-  <div id="CPDiv">
+  <>
+    <reactBootstrap.Navbar bg="dark">
+      <reactBootstrap.Container>
+        <reactBootstrap.Navbar.Brand href="#">
+          Trendiver
+        </reactBootstrap.Navbar.Brand>
+      </reactBootstrap.Container>
+    </reactBootstrap.Navbar>
     <ControlPanel DB={DB} />
-  </div>,
+  </>,
 )
