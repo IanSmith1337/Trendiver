@@ -3,7 +3,10 @@ import ReactDOM from 'react-dom/client'
 import ControlPanel from './components/ControlPanel.jsx'
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
-import './style/index.css'
+import './style/starter.css'
+import '../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js'
+
+require('bootstrap')
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 const config = {
@@ -25,16 +28,51 @@ const config = {
 }
 const FBapp = initializeApp(config)
 const DB = getFirestore(FBapp)
-
-function render() {
-  root.render(
+root.render(
+  <div id="body">
+    <nav className="navbar navbar-light bg-light">
+      <a className="navbar-brand">Trendiver</a>
+      <form className="form-inline" id="UserSearch">
+        <div className="input-group">
+          <div className="input-group-prepend">
+            <span className="input-group-text" id="atprepend">
+              @
+            </span>
+          </div>
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Username"
+            aria-label="Username"
+            aria-describedby="atprepend"
+          />
+        </div>
+        <button className="btn btn-outline-success my-2 my-sm-0" type="submit">
+          Search User
+        </button>
+      </form>
+      <form className="form-inline" id="TagSearch">
+        <div className="input-group">
+          <div className="input-group-prepend">
+            <span className="input-group-text" id="hashprepend">
+              #
+            </span>
+          </div>
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Hashtag"
+            aria-label="Hashtah"
+            aria-describedby="hashprepend"
+          />
+        </div>
+        <button className="btn btn-outline-success my-2 my-sm-0" type="submit">
+          Search Tag
+        </button>
+      </form>
+    </nav>
     <div>
-      <header>
-        <h1>Trendiver</h1>
-      </header>
       <ControlPanel DB={DB} />
-    </div>,
-  )
-}
-
-render()
+    </div>
+  </div>,
+)

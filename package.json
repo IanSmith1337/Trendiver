@@ -8,7 +8,11 @@
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
-    "publish": "electron-forge publish"
+    "publish": "electron-forge publish",
+    "css-compile": "sass --style compressed --source-map --embed-sources --no-error-css --load-path=node_modules scss/:css/",
+    "css-lint": "stylelint scss/",
+    "css-prefix": "postcss --replace css/styles.css --use autoprefixer --map",
+    "css": "npm-run-all css-compile css-prefix"
   },
   "repository": {
     "type": "git",
@@ -40,16 +44,25 @@
     "@electron-forge/plugin-webpack": "^6.0.0",
     "@electron-forge/publisher-github": "^6.0.0-beta.66",
     "@vercel/webpack-asset-relocator-loader": "^1.7.3",
+    "autoprefixer": "^10.4.13",
     "babel-loader": "^9.1.0",
     "css-loader": "^6.7.1",
     "electron": "21.2.2",
     "electron-squirrel-startup": "^1.0.0",
     "node-loader": "^2.0.0",
+    "postcss": "^8.4.19",
+    "postcss-cli": "^10.0.0",
+    "sass": "^1.54.8",
     "style-loader": "^3.3.1",
+    "stylelint": "^14.15.0",
     "webpack": "^5.74.0",
-    "webpack-cli": "^4.10.0"
+    "webpack-cli": "^4.10.0",
+    "stylelint-config-twbs-bootstrap": "^3.2.1"
   },
   "dependencies": {
+    "@popperjs/core": "^2.11.6",
+    "bootstrap": "^5.2.0",
+    "apexcharts": "^3.36.3",
     "electron-squirrel-startup": "^1.0.0",
     "firebase": "^9.13.0",
     "react": "^18.2.0",

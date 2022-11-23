@@ -1,5 +1,5 @@
 import React from 'react'
-import ControlPanelSelectLength from './ControlPanelSelectLength.jsx'
+import ControlPanelSpan from './ControlPanelSpan.jsx'
 import ControlPanelPageSize from './ControlPanelPageSize.jsx'
 import {
   onSnapshot,
@@ -17,13 +17,14 @@ class ControlPanel extends React.Component {
     super(props)
     this.handlePSChange = this.handlePSChange.bind(this)
     this.handleSpanChange = this.handleSpanChange.bind(this)
+    this.handleCurrentPageChange = this.handleCurrentPageChange.bind(this)
     this.updateList = this.updateList.bind(this)
     this.updateQuery = this.handleQueryUpdate.bind(this)
     this.Subscribe = this.Subscribe.bind(this)
     this.handleLoadToggle = this.handleLoadToggle.bind(this)
     this.firstTime = true
     this.state = {
-      span: 0,
+      span: 5,
       map: new Map(),
       pageSize: 25,
       currentPage: 0,
@@ -32,6 +33,14 @@ class ControlPanel extends React.Component {
       isLoading: false,
     }
     this.loadRef = React.createRef()
+  }
+
+  componentDidMount() {
+    window.addEventListener('load', this.handleQueryUpdate())
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('load', this.handleQueryUpdate())
   }
 
   Subscribe() {
@@ -117,7 +126,7 @@ class ControlPanel extends React.Component {
   updateList() {
     if (
       this.state.map.size !== null &&
-      (this.state.map.size > this.state.pageSize || this.state.currentPage > 1)
+      (this.state.map.size > this.state.pageSize || this.state.currentPage > 0)
     ) {
       var listItems = []
       const startPoint = this.state.currentPage * this.state.pageSize
@@ -130,7 +139,20 @@ class ControlPanel extends React.Component {
       for (var i = startPoint; i < endPoint; i++) {
         const index = Array.from(this.state.map.keys())[i]
         const item = this.state.map.get(index)
-        listItems.push(<li key={index}>{index + ': ' + item}</li>)
+        listItems.push(
+          <tr key={index + item}>
+            <td>
+              <p>{i + 1}</p>
+            </td>
+            <td>
+              <p>{index}</p>
+            </td>
+            <td>
+              <p>{item}</p>
+            </td>
+            <td></td>
+          </tr>,
+        )
       }
       this.list = listItems
       console.log('List updated.')
@@ -140,12 +162,35 @@ class ControlPanel extends React.Component {
       for (var i = 0; i < this.state.map.size; i++) {
         const index = Array.from(this.state.map.keys())[i]
         const item = this.state.map.get(index)
-        listItems.push(<li key={index}>{index + ': ' + item}</li>)
+        listItems.push(
+          <tr>
+            <td>
+              <p>{i + 1}</p>
+            </td>
+            <td>
+              <p>{index}</p>
+            </td>
+            <td>
+              <p>{item}</p>
+            </td>
+            <td></td>
+          </tr>,
+        )
       }
       this.list = listItems
       console.log('List updated.')
       return listItems
     }
+  }
+
+  handleCurrentPageChange(current) {
+    this.setState({ currentPage: current }, () => {
+      const node = this.loadRef.current
+      node.toggle()
+      this.setState({ list: this.updateList() }, () => {
+        node.toggle()
+      })
+    })
   }
 
   handlePSChange(Page) {
@@ -168,10 +213,7 @@ class ControlPanel extends React.Component {
     return (
       <div className="ControlPanel">
         <div className="ControlPanelUpper">
-          <ControlPanelSelectLength
-            span={span}
-            onSpanChange={this.handleSpanChange}
-          />
+          <ControlPanelSpan span={span} onSpanChange={this.handleSpanChange} />
           <ControlPanelPageSize
             pageSize={pageSize}
             onLenChange={this.handlePSChange}
@@ -183,16 +225,87 @@ class ControlPanel extends React.Component {
             isLoading={load}
             toggle={this.handleLoadToggle}
           ></Loading>
-          <ol
-            id="listRoot"
+          <table
+            id="dataRoot"
             style={{
               display: !this.state.isLoading ? 'block' : 'none',
             }}
           >
-            {this.state.list}
-          </ol>
+            <thead>
+              <tr>
+                <th id="rankHead">
+                  <div>
+                    <p>Rank</p>
+                  </div>
+                </th>
+                <th id="itemHead">
+                  <div>
+                    <p>Item</p>
+                  </div>
+                </th>
+                <th id="hitsHead">
+                  <div>
+                    <p>Hits</p>
+                  </div>
+                </th>
+                <th id="chartHead">
+                  <div>
+                    <p>Chart</p>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>{this.state.list}</tbody>
+          </table>
         </div>
-        <div className="ControlPanelLower"></div>
+        <div className="ControlPanelLower">
+          {this.state.currentPage > 0 && (
+            <div className="backwards">
+              <a
+                onClick={() => {
+                  this.handleCurrentPageChange(0)
+                }}
+              >
+                ❮❮
+              </a>
+              <a
+                onClick={() => {
+                  const m1 = this.state.currentPage - 1
+                  this.handleCurrentPageChange(m1)
+                }}
+              >
+                ❮
+              </a>
+            </div>
+          )}
+          {this.list !== undefined && (
+            <div className="currentPage">
+              <p>Current Page: {this.state.currentPage}</p>
+            </div>
+          )}
+          {this.state.currentPage <
+            (this.state.map.size / this.state.pageSize).toFixed(0) - 1 && (
+            <div className="forwards">
+              <a
+                onClick={() => {
+                  const p1 = this.state.currentPage + 1
+                  this.handleCurrentPageChange(p1)
+                }}
+              >
+                ❯
+              </a>
+              <a
+                onClick={() => {
+                  const end =
+                    (this.state.map.size / this.state.pageSize).toFixed(0) - 1
+                  this.handleCurrentPageChange(end)
+                }}
+              >
+                ❯❯
+              </a>
+            </div>
+          )}
+        </div>
       </div>
     )
   }
