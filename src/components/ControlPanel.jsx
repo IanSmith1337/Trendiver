@@ -54,6 +54,9 @@ class ControlPanel extends React.Component {
             console.log('Remove: ' + change.doc.id)
           }
         })
+        new Notification("List update!", {
+          
+        })
       } else {
         console.log('First run.')
         snap.docChanges().forEach((change) => {
