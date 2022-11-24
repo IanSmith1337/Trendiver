@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client'
 import ControlPanel from './components/ControlPanel.jsx'
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
-import * as reactBootstrap from 'react-bootstrap'
+import { Navbar, Container, InputGroup, Form } from 'react-bootstrap'
 import '../src/style/index.css'
 
 const root = createRoot(document.getElementById('root'))
@@ -76,13 +76,21 @@ const DB = getFirestore(FBapp)
 
 root.render(
   <>
-    <reactBootstrap.Navbar bg="dark">
-      <reactBootstrap.Container>
-        <reactBootstrap.Navbar.Brand href="#">
-          Trendiver
-        </reactBootstrap.Navbar.Brand>
-      </reactBootstrap.Container>
-    </reactBootstrap.Navbar>
+    <Navbar variant="dark" bg="dark">
+      <Container className="justify-content-start">
+        <Navbar.Brand href="#">Trendiver</Navbar.Brand>
+      </Container>
+      <Container className="justify-content-end">
+        <InputGroup className="md-3">
+          <InputGroup.Text id="AtSign">@</InputGroup.Text>
+          <Form.Control
+            placeholder="Username"
+            aria-label="Username"
+            aria-describedby="AtSign"
+          />
+        </InputGroup>
+      </Container>
+    </Navbar>
     <ControlPanel DB={DB} />
   </>,
 )
