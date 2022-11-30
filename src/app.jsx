@@ -1,11 +1,13 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { createRoot } from 'react-dom/client'
 import ControlPanel from './components/ControlPanel.jsx'
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
-import { Navbar, Container, InputGroup, Form } from 'react-bootstrap'
+import { Navbar, Container, InputGroup, Form, Stack } from 'react-bootstrap'
 import '../src/style/index.css'
+import { Search } from 'react-bootstrap-icons'
+import SearchComp from './components/SearchComp.jsx'
 
 const root = createRoot(document.getElementById('root'))
 const config = {
@@ -27,6 +29,25 @@ const config = {
 }
 const FBapp = initializeApp(config)
 const DB = getFirestore(FBapp)
+
+function init() {
+  root.render(
+    <>
+      <Stack direction="horizontal">
+        <Navbar variant="dark" bg="dark" className="px-4" sticky="top">
+          <Navbar.Brand href="#" className="me-0">
+            Trendiver
+          </Navbar.Brand>
+        </Navbar>
+        <div className="ms-auto"></div>
+        <Navbar variant="dark" bg="dark" className="px-4" sticky="top">
+          <SearchComp />
+        </Navbar>
+      </Stack>
+      <ControlPanel DB={DB} />
+    </>,
+  )
+}
 
 {
   /* 
@@ -74,23 +95,4 @@ const DB = getFirestore(FBapp)
 */
 }
 
-root.render(
-  <>
-    <Navbar variant="dark" bg="dark">
-      <Container className="justify-content-start">
-        <Navbar.Brand href="#">Trendiver</Navbar.Brand>
-      </Container>
-      <Container className="justify-content-end">
-        <InputGroup className="md-3">
-          <InputGroup.Text id="AtSign">@</InputGroup.Text>
-          <Form.Control
-            placeholder="Username"
-            aria-label="Username"
-            aria-describedby="AtSign"
-          />
-        </InputGroup>
-      </Container>
-    </Navbar>
-    <ControlPanel DB={DB} />
-  </>,
-)
+init()

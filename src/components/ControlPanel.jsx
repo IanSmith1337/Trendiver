@@ -9,6 +9,7 @@ import {
   limit,
 } from 'firebase/firestore'
 import Loading from './Loading.jsx'
+import { Button, Stack } from 'react-bootstrap'
 
 var stop = null
 
@@ -24,13 +25,13 @@ class ControlPanel extends React.Component {
     this.handleLoadToggle = this.handleLoadToggle.bind(this)
     this.firstTime = true
     this.state = {
-      span: 5,
+      span: 1,
       map: new Map(),
       pageSize: 25,
-      currentPage: 0,
+      currentPage: 1,
       query: undefined,
       list: [],
-      isLoading: false,
+      isLoading: true,
     }
     this.loadRef = React.createRef()
   }
@@ -46,6 +47,8 @@ class ControlPanel extends React.Component {
   Subscribe() {
     stop = onSnapshot(this.state.query, (snap) => {
       if (!this.firstTime) {
+        const node = this.loadRef.current
+        node.toggle()
         snap.docChanges().forEach((change) => {
           if (change.type === 'added') {
             console.log('Add: ' + change.doc.id)
@@ -62,6 +65,7 @@ class ControlPanel extends React.Component {
         this.firstTime = false
         console.log('Listener created.')
       }
+      this.state.map.clear()
       snap.forEach((doc) => {
         const currentDocData = doc.data()
         for (const entity in currentDocData) {
@@ -88,9 +92,9 @@ class ControlPanel extends React.Component {
           console.log('Sorted. Updating list...')
           this.setState({ list: this.updateList() }, () => {
             console.log('List state updated.')
+            const node = this.loadRef.current
+            node.toggle()
           })
-          const node = this.loadRef.current
-          node.toggle()
         },
       )
     })
@@ -113,11 +117,10 @@ class ControlPanel extends React.Component {
         console.log('Query updated')
         if (stop !== undefined && stop !== null) {
           stop()
+          this.firstTime = true
           console.log('Listener stopped.')
         }
         console.log('Mounting new listener...')
-        const node = this.loadRef.current
-        node.toggle()
         this.Subscribe()
       },
     )
@@ -126,15 +129,15 @@ class ControlPanel extends React.Component {
   updateList() {
     if (
       this.state.map.size !== null &&
-      (this.state.map.size > this.state.pageSize || this.state.currentPage > 0)
+      (this.state.map.size > this.state.pageSize ||
+        this.state.currentPage - 1 > 0)
     ) {
       var listItems = []
-      const startPoint = this.state.currentPage * this.state.pageSize
+      const startPoint = (this.state.currentPage - 1) * this.state.pageSize
       const endPoint =
         this.state.map.size !== null &&
-        this.state.map.size >=
-          (this.state.currentPage + 1) * this.state.pageSize
-          ? (this.state.currentPage + 1) * this.state.pageSize
+        this.state.map.size >= this.state.currentPage * this.state.pageSize
+          ? this.state.currentPage * this.state.pageSize
           : this.state.map.size - 1
       for (var i = startPoint; i < endPoint; i++) {
         const index = Array.from(this.state.map.keys())[i]
@@ -184,8 +187,8 @@ class ControlPanel extends React.Component {
   }
 
   handleCurrentPageChange(current) {
+    const node = this.loadRef.current
     this.setState({ currentPage: current }, () => {
-      const node = this.loadRef.current
       node.toggle()
       this.setState({ list: this.updateList() }, () => {
         node.toggle()
@@ -194,13 +197,19 @@ class ControlPanel extends React.Component {
   }
 
   handlePSChange(Page) {
+    const node = this.loadRef.current
     this.setState({ pageSize: Page }, () => {
-      this.setState({ list: this.updateList() })
+      node.toggle()
+      this.setState({ list: this.updateList() }, () => {
+        node.toggle()
+      })
     })
   }
 
   handleSpanChange(Span) {
+    const node = this.loadRef.current
     this.setState({ span: Span }, () => {
+      node.toggle()
       console.log('Updating query...')
       this.handleQueryUpdate()
     })
@@ -258,54 +267,60 @@ class ControlPanel extends React.Component {
             <tbody>{this.state.list}</tbody>
           </table>
         </div>
-        <div className="ControlPanelLower">
-          {this.state.currentPage > 0 && (
+        <Stack direction="horizontal" id="ControlPanelLower">
+          {this.state.currentPage > 1 && (
             <div className="backwards">
-              <a
+              <Button
                 onClick={() => {
-                  this.handleCurrentPageChange(0)
+                  this.handleCurrentPageChange(1)
                 }}
               >
                 ❮❮
-              </a>
-              <a
+              </Button>
+              <Button
                 onClick={() => {
                   const m1 = this.state.currentPage - 1
                   this.handleCurrentPageChange(m1)
                 }}
               >
                 ❮
-              </a>
+              </Button>
             </div>
           )}
           {this.list !== undefined && (
-            <div className="currentPage">
-              <p>Current Page: {this.state.currentPage}</p>
-            </div>
+            <Button className="currentPage">
+              Current Page: {this.state.currentPage}
+            </Button>
           )}
           {this.state.currentPage <
-            (this.state.map.size / this.state.pageSize).toFixed(0) - 1 && (
+            (this.state.map.size / this.state.pageSize).toFixed(0) && (
             <div className="forwards">
-              <a
+              <Button
                 onClick={() => {
+                  console.log(
+                    this.state.currentPage +
+                      ' ' +
+                      (this.state.map.size / this.state.pageSize).toFixed(0),
+                  )
                   const p1 = this.state.currentPage + 1
                   this.handleCurrentPageChange(p1)
                 }}
               >
                 ❯
-              </a>
-              <a
+              </Button>
+              <Button
                 onClick={() => {
-                  const end =
-                    (this.state.map.size / this.state.pageSize).toFixed(0) - 1
+                  const end = (
+                    this.state.map.size / this.state.pageSize
+                  ).toFixed(0)
                   this.handleCurrentPageChange(end)
                 }}
               >
                 ❯❯
-              </a>
+              </Button>
             </div>
           )}
-        </div>
+        </Stack>
       </div>
     )
   }
