@@ -34,17 +34,19 @@ function init() {
   root.render(
     <>
       <Stack direction="horizontal">
-        <Navbar variant="dark" bg="dark" className="px-4" sticky="top">
+        <Navbar variant="dark" bg="dark" className="px-4">
           <Navbar.Brand href="#" className="me-0">
             Trendiver
           </Navbar.Brand>
         </Navbar>
         <div className="ms-auto"></div>
-        <Navbar variant="dark" bg="dark" className="px-4" sticky="top">
+        <Navbar variant="dark" bg="dark" className="px-4">
           <SearchComp />
         </Navbar>
       </Stack>
-      <ControlPanel DB={DB} />
+      <Container fluid>
+        <ControlPanel DB={DB} />
+      </Container>
     </>,
   )
 }

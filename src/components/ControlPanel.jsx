@@ -9,7 +9,7 @@ import {
   limit,
 } from 'firebase/firestore'
 import Loading from './Loading.jsx'
-import { Button, Stack } from 'react-bootstrap'
+import { Button, Pagination, Stack } from 'react-bootstrap'
 
 var stop = null
 
@@ -267,60 +267,90 @@ class ControlPanel extends React.Component {
             <tbody>{this.state.list}</tbody>
           </table>
         </div>
-        <Stack direction="horizontal" id="ControlPanelLower">
+        <Pagination>
           {this.state.currentPage > 1 && (
-            <div className="backwards">
-              <Button
-                onClick={() => {
-                  this.handleCurrentPageChange(1)
-                }}
-              >
-                ❮❮
-              </Button>
-              <Button
-                onClick={() => {
-                  const m1 = this.state.currentPage - 1
-                  this.handleCurrentPageChange(m1)
-                }}
-              >
-                ❮
-              </Button>
-            </div>
+            <Pagination.First
+              onClick={() => {
+                this.handleCurrentPageChange(1)
+              }}
+            />
+          )}
+          {this.state.currentPage - 1 >= 1 && (
+            <Pagination.Prev
+              onClick={() => {
+                const m1 = this.state.currentPage - 1
+                this.handleCurrentPageChange(m1)
+              }}
+            />
+          )}
+          {this.state.currentPage - 2 >= 1 && (
+            <Pagination.Item
+              onClick={() => {
+                const m2 = this.state.currentPage - 2
+                this.handleCurrentPageChange(m2)
+              }}
+            >
+              {this.state.currentPage - 2}
+            </Pagination.Item>
+          )}
+          {this.state.currentPage - 1 >= 1 && (
+            <Pagination.Item
+              onClick={() => {
+                const m1 = this.state.currentPage - 1
+                this.handleCurrentPageChange(m1)
+              }}
+            >
+              {this.state.currentPage - 1}
+            </Pagination.Item>
           )}
           {this.list !== undefined && (
-            <Button className="currentPage">
+            <Pagination.Item disabled>
               Current Page: {this.state.currentPage}
-            </Button>
+            </Pagination.Item>
+          )}
+          {this.state.currentPage + 1 <=
+            (this.state.map.size / this.state.pageSize).toFixed(0) && (
+            <Pagination.Item
+              onClick={() => {
+                const p1 = this.state.currentPage + 1
+                this.handleCurrentPageChange(p1)
+              }}
+            >
+              {this.state.currentPage + 1}
+            </Pagination.Item>
+          )}
+          {this.state.currentPage + 2 <=
+            (this.state.map.size / this.state.pageSize).toFixed(0) && (
+            <Pagination.Item
+              onClick={() => {
+                const p2 = this.state.currentPage + 2
+                this.handleCurrentPageChange(p2)
+              }}
+            >
+              {this.state.currentPage + 2}
+            </Pagination.Item>
+          )}
+          {this.state.currentPage + 1 <=
+            (this.state.map.size / this.state.pageSize).toFixed(0) && (
+            <Pagination.Next
+              onClick={() => {
+                const n = this.state.currentPage + 1
+                this.handleCurrentPageChange(n)
+              }}
+            />
           )}
           {this.state.currentPage <
             (this.state.map.size / this.state.pageSize).toFixed(0) && (
-            <div className="forwards">
-              <Button
-                onClick={() => {
-                  console.log(
-                    this.state.currentPage +
-                      ' ' +
-                      (this.state.map.size / this.state.pageSize).toFixed(0),
-                  )
-                  const p1 = this.state.currentPage + 1
-                  this.handleCurrentPageChange(p1)
-                }}
-              >
-                ❯
-              </Button>
-              <Button
-                onClick={() => {
-                  const end = (
-                    this.state.map.size / this.state.pageSize
-                  ).toFixed(0)
-                  this.handleCurrentPageChange(end)
-                }}
-              >
-                ❯❯
-              </Button>
-            </div>
+            <Pagination.Last
+              onClick={() => {
+                const end = (this.state.map.size / this.state.pageSize).toFixed(
+                  0,
+                )
+                this.handleCurrentPageChange(end)
+              }}
+            />
           )}
-        </Stack>
+        </Pagination>
       </div>
     )
   }
