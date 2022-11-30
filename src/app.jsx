@@ -41,7 +41,7 @@ function init() {
         </Navbar>
         <div className="ms-auto"></div>
         <Navbar variant="dark" bg="dark" className="px-4">
-          <SearchComp />
+          <SearchComp DB={DB} />
         </Navbar>
       </Stack>
       <Container fluid>
