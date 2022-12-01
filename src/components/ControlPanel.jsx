@@ -25,6 +25,7 @@ class ControlPanel extends React.Component {
     this.Subscribe = this.Subscribe.bind(this)
     this.handleLoadToggle = this.handleLoadToggle.bind(this)
     this.firstTime = true
+    this.update = 0
     this.state = {
       span: 1,
       map: new Map(),
@@ -33,9 +34,10 @@ class ControlPanel extends React.Component {
       query: undefined,
       list: [],
       isLoading: true,
-      lastUpdate: new Date(),
+      cd: <Countdown />,
     }
     this.loadRef = React.createRef()
+    this.timerRef = React.createRef()
   }
 
   componentDidMount() {
@@ -83,9 +85,8 @@ class ControlPanel extends React.Component {
                 this.state.map.set(entity, element)
               }
             } else {
-              if (this.state.lastUpdate.getTime() < element * 1000) {
-                console.log('New time found, updating state...')
-                this.setState({ lastUpdate: new Date(element * 1000) })
+              if (element * 1000 + 300000 >= this.update) {
+                this.update = new Date(element * 1000 + 300000)
               }
             }
           }
@@ -231,9 +232,6 @@ class ControlPanel extends React.Component {
     const span = this.state.span
     const pageSize = this.state.pageSize
     const load = this.state.isLoading
-    console.log(this.state.lastUpdate)
-    const futureUp = new Date(this.state.lastUpdate.getTime() + 300000)
-    console.log(futureUp)
     return (
       <div className="ControlPanel">
         <div className="ControlPanelUpper">
@@ -242,9 +240,9 @@ class ControlPanel extends React.Component {
             pageSize={pageSize}
             onLenChange={this.handlePSChange}
           />
+          <Countdown date={this.update} />
         </div>
         <div className="ControlPanelCenter">
-          <Countdown date={futureUp} />
           <Loading
             ref={this.loadRef}
             isLoading={load}
