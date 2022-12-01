@@ -59,6 +59,7 @@
     "react": "^18.2.0",
     "react-bootstrap": "^2.6.0",
     "react-bootstrap-icons": "^1.10.2",
+    "react-countdown": "^2.3.5",
     "react-dom": "^18.2.0"
   },
   "overrides": {

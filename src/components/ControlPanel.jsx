@@ -10,6 +10,7 @@ import {
 } from 'firebase/firestore'
 import Loading from './Loading.jsx'
 import { Button, Pagination, Stack } from 'react-bootstrap'
+import Countdown from 'react-countdown'
 
 var stop = null
 
@@ -32,6 +33,7 @@ class ControlPanel extends React.Component {
       query: undefined,
       list: [],
       isLoading: true,
+      lastUpdate: new Date(),
     }
     this.loadRef = React.createRef()
   }
@@ -47,8 +49,6 @@ class ControlPanel extends React.Component {
   Subscribe() {
     stop = onSnapshot(this.state.query, (snap) => {
       if (!this.firstTime) {
-        const node = this.loadRef.current
-        node.toggle()
         snap.docChanges().forEach((change) => {
           if (change.type === 'added') {
             console.log('Add: ' + change.doc.id)
@@ -57,6 +57,7 @@ class ControlPanel extends React.Component {
             console.log('Remove: ' + change.doc.id)
           }
         })
+        console.log('Update found, reloading list...')
       } else {
         console.log('First run.')
         snap.docChanges().forEach((change) => {
@@ -64,6 +65,10 @@ class ControlPanel extends React.Component {
         })
         this.firstTime = false
         console.log('Listener created.')
+      }
+      if (!this.state.isLoading) {
+        const node = this.loadRef.current
+        node.toggle()
       }
       this.state.map.clear()
       snap.forEach((doc) => {
@@ -76,6 +81,11 @@ class ControlPanel extends React.Component {
                 this.state.map.set(entity, this.state.map.get(entity) + element)
               } else {
                 this.state.map.set(entity, element)
+              }
+            } else {
+              if (this.state.lastUpdate.getTime() < element * 1000) {
+                console.log('New time found, updating state...')
+                this.setState({ lastUpdate: new Date(element * 1000) })
               }
             }
           }
@@ -92,8 +102,10 @@ class ControlPanel extends React.Component {
           console.log('Sorted. Updating list...')
           this.setState({ list: this.updateList() }, () => {
             console.log('List state updated.')
-            const node = this.loadRef.current
-            node.toggle()
+            if (this.state.isLoading) {
+              const node = this.loadRef.current
+              node.toggle()
+            }
           })
         },
       )
@@ -219,6 +231,9 @@ class ControlPanel extends React.Component {
     const span = this.state.span
     const pageSize = this.state.pageSize
     const load = this.state.isLoading
+    console.log(this.state.lastUpdate)
+    const futureUp = new Date(this.state.lastUpdate.getTime() + 300000)
+    console.log(futureUp)
     return (
       <div className="ControlPanel">
         <div className="ControlPanelUpper">
@@ -229,6 +244,7 @@ class ControlPanel extends React.Component {
           />
         </div>
         <div className="ControlPanelCenter">
+          <Countdown date={futureUp} />
           <Loading
             ref={this.loadRef}
             isLoading={load}

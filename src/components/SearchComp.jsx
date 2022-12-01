@@ -34,10 +34,10 @@ class SearchComp extends React.Component {
       <React.Fragment>
         {!this.state.shouldClose ? (
           <Button onClick={this.toggleClose}>
-            <Search width={24} height={24} color="white" />
+            <Search color="white" />
           </Button>
         ) : (
-          <InputGroup className="md-3">
+          <InputGroup id="SearchBar">
             <DropdownButton title={this.state.user ? '@' : '#'} id="SearchType">
               <Dropdown.Item onClick={this.toggleUser}>
                 {this.state.user ? '#' : '@'}
@@ -47,11 +47,9 @@ class SearchComp extends React.Component {
               placeholder={this.state.user ? '@name' : '#topic'}
               aria-label={this.state.user ? 'Username' : 'Hashtag'}
               aria-describedby={this.state.user ? 'AtSign' : 'HashSign'}
+              autoFocus
+              onBlur={this.toggleClose}
             />
-            <Button id="SearchSubmit">Search</Button>
-            <Button onClick={this.toggleClose}>
-              <X width={24} height={24} color="white" />
-            </Button>
           </InputGroup>
         )}
       </React.Fragment>
