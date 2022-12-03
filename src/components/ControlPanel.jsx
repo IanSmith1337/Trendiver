@@ -34,10 +34,9 @@ class ControlPanel extends React.Component {
       query: undefined,
       list: [],
       isLoading: true,
-      cd: <Countdown />,
     }
     this.loadRef = React.createRef()
-    this.timerRef = React.createRef()
+    this.key = this.update
   }
 
   componentDidMount() {
@@ -68,10 +67,6 @@ class ControlPanel extends React.Component {
         this.firstTime = false
         console.log('Listener created.')
       }
-      if (!this.state.isLoading) {
-        const node = this.loadRef.current
-        node.toggle()
-      }
       this.state.map.clear()
       snap.forEach((doc) => {
         const currentDocData = doc.data()
@@ -85,8 +80,8 @@ class ControlPanel extends React.Component {
                 this.state.map.set(entity, element)
               }
             } else {
-              if (element * 1000 + 300000 >= this.update) {
-                this.update = new Date(element * 1000 + 300000)
+              if (element * 1000 + 305000 >= this.update) {
+                this.update = new Date(element * 1000 + 305000)
               }
             }
           }
@@ -106,6 +101,7 @@ class ControlPanel extends React.Component {
             if (this.state.isLoading) {
               const node = this.loadRef.current
               node.toggle()
+              this.key = this.update / 1000
             }
           })
         },
@@ -240,7 +236,19 @@ class ControlPanel extends React.Component {
             pageSize={pageSize}
             onLenChange={this.handlePSChange}
           />
-          <Countdown date={this.update} />
+        </div>
+        <div id="timer">
+          {this.update > 0 && (
+            <Countdown
+              date={this.update}
+              key={this.key}
+              onComplete={() => {
+                if (!this.state.isLoading) {
+                  this.loadRef.current.toggle()
+                }
+              }}
+            />
+          )}
         </div>
         <div className="ControlPanelCenter">
           <Loading
