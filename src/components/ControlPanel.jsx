@@ -9,7 +9,7 @@ import {
   limit,
 } from 'firebase/firestore'
 import Loading from './Loading.jsx'
-import { Button, Pagination, Stack } from 'react-bootstrap'
+import { Button, Pagination, Stack, Modal } from 'react-bootstrap'
 import Countdown from 'react-countdown'
 
 var stop = null
@@ -216,8 +216,8 @@ class ControlPanel extends React.Component {
   }
 
   handleSpanChange(Span) {
-    const node = this.loadRef.current
     this.setState({ span: Span }, () => {
+      const node = this.loadRef.current
       node.toggle()
       console.log('Updating query...')
       this.handleQueryUpdate()
@@ -229,15 +229,31 @@ class ControlPanel extends React.Component {
     const pageSize = this.state.pageSize
     const load = this.state.isLoading
     return (
-      <div className="ControlPanel">
-        <div className="ControlPanelUpper">
+      <div id="ControlPanel" className="position-relative">
+        <Loading
+          ref={this.loadRef}
+          isLoading={load}
+          toggle={this.handleLoadToggle}
+          
+        ></Loading>
+        <div
+          id="ControlPanelUpper"
+          style={{
+            display: !this.state.isLoading ? 'block' : 'none',
+          }}
+        >
           <ControlPanelSpan span={span} onSpanChange={this.handleSpanChange} />
           <ControlPanelPageSize
             pageSize={pageSize}
             onLenChange={this.handlePSChange}
           />
         </div>
-        <div id="timer">
+        <div
+          id="timer"
+          style={{
+            display: !this.state.isLoading ? 'block' : 'none',
+          }}
+        >
           {this.update > 0 && (
             <Countdown
               date={this.update}
@@ -250,18 +266,13 @@ class ControlPanel extends React.Component {
             />
           )}
         </div>
-        <div className="ControlPanelCenter">
-          <Loading
-            ref={this.loadRef}
-            isLoading={load}
-            toggle={this.handleLoadToggle}
-          ></Loading>
-          <table
-            id="dataRoot"
-            style={{
-              display: !this.state.isLoading ? 'block' : 'none',
-            }}
-          >
+        <div
+          id="ControlPanelCenter"
+          style={{
+            display: !this.state.isLoading ? 'block' : 'none',
+          }}
+        >
+          <table id="dataRoot">
             <thead>
               <tr>
                 <th id="rankHead">
@@ -289,7 +300,12 @@ class ControlPanel extends React.Component {
             <tbody>{this.state.list}</tbody>
           </table>
         </div>
-        <Pagination>
+        <Pagination
+          id="pagination"
+          style={{
+            display: !this.state.isLoading ? 'block' : 'none',
+          }}
+        >
           {this.state.currentPage > 1 && (
             <Pagination.First
               onClick={() => {
