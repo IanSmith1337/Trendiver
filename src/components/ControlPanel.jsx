@@ -9,7 +9,7 @@ import {
   limit,
 } from 'firebase/firestore'
 import Loading from './Loading.jsx'
-import { Button, Pagination, Stack, Modal } from 'react-bootstrap'
+import { Button, Pagination, Stack, Modal, Table } from 'react-bootstrap'
 import Countdown from 'react-countdown'
 
 var stop = null
@@ -234,7 +234,6 @@ class ControlPanel extends React.Component {
           ref={this.loadRef}
           isLoading={load}
           toggle={this.handleLoadToggle}
-          
         ></Loading>
         <div
           id="ControlPanelUpper"

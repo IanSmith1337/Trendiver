@@ -21,9 +21,6 @@ class ControlPanelSpan extends React.Component {
             <option value="30">30 minutes</option>
             <option value="60">hour</option>
             <option value="180">3 hours</option>
-            <option value="360">6 hours</option>
-            <option value="720">12 hours</option>
-            <option value="1440">day</option>
           </select>
           .
         </label>
