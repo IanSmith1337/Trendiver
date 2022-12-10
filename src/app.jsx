@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { createRoot } from 'react-dom/client'
-import ControlPanel from './components/ControlPanel.jsx'
+import ControlPanel2 from './components/ControlPanel2.jsx'
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
 import { Navbar, Container, InputGroup, Form, Stack } from 'react-bootstrap'
@@ -45,7 +45,7 @@ function init() {
         </Navbar>
       </Stack>
       <Container fluid>
-        <ControlPanel DB={DB} />
+        <ControlPanel2 DB={DB} />
       </Container>
     </>,
   )
