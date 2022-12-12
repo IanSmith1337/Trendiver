@@ -7,3 +7,10 @@ This app attempts to aggregate and rank hashtags and mentions from Twitter, for 
 ## Framework
 
 Front-end developed in React and Electron, with styling in Bootstrap CSS.
+
+## TODO
+
+Update UI
+Add Dynamic pages for all tags
+Add charts
+Implement search
