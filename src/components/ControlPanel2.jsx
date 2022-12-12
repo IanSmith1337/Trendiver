@@ -19,11 +19,10 @@ class ControlPanel2 extends React.Component {
   constructor(props) {
     super(props)
     this.handlePSChange = this.handlePSChange.bind(this)
-    this.handleCurrentPageChange = this.handleCurrentPageChange.bind(this)
+    this.handlePageFlip = this.handlePageFlip.bind(this)
     this.updateList = this.updateList.bind(this)
     this.Subscribe = this.Subscribe.bind(this)
     this.handleLoadToggle = this.handleLoadToggle.bind(this)
-    this.jumpTo = this.jumpTo.bind(this)
     this.firstTime = true
     this.update = 0
     this.state = {
@@ -272,22 +271,6 @@ class ControlPanel2 extends React.Component {
     this.setState({ isLoading: t })
   }
 
-  jumpTo() {
-    try {
-      var page = parseInt(prompt('Enter page to jump to:', 1))
-      if (isNaN(page)) {
-        throw 'Error: not a number.'
-      }
-      if (page <= 0) {
-        throw 'Error: Page must be 1 or greater.'
-      }
-      if (page > (this.state.map60.size / this.state.pageSize).toFixed(0)) {
-        var max = (this.state.map60.size / this.state.pageSize).toFixed(0)
-        throw 'Error: Current page maximum is ' + { max }
-      }
-    } catch (error) {}
-  }
-
   updateList() {
     if (
       this.state.map60.size !== null &&
@@ -319,7 +302,6 @@ class ControlPanel2 extends React.Component {
             <td>
               <p>{item60}</p>
             </td>
-            <td></td>
           </tr>,
         )
       }
@@ -346,7 +328,6 @@ class ControlPanel2 extends React.Component {
             <td>
               <p>{item60}</p>
             </td>
-            <td></td>
           </tr>,
         )
       }
@@ -356,10 +337,10 @@ class ControlPanel2 extends React.Component {
     }
   }
 
-  handleCurrentPageChange(current) {
+  handlePageFlip(current) {
     const node = this.loadRef.current
+    node.toggle()
     this.setState({ currentPage: current }, () => {
-      node.toggle()
       this.setState({ list: this.updateList() }, () => {
         node.toggle()
       })
@@ -368,8 +349,8 @@ class ControlPanel2 extends React.Component {
 
   handlePSChange(Page) {
     const node = this.loadRef.current
-    this.setState({ pageSize: Page }, () => {
-      node.toggle()
+    node.toggle()
+    this.setState({ currentPage: 1, pageSize: Page }, () => {
       this.setState({ list: this.updateList() }, () => {
         node.toggle()
       })
@@ -452,11 +433,6 @@ class ControlPanel2 extends React.Component {
                       <p>1 hour</p>
                     </div>
                   </th>
-                  <th id="chartHead" className="flex-fill">
-                    <div>
-                      <p>Chart</p>
-                    </div>
-                  </th>
                 </tr>
               </thead>
               <tbody>{this.state.list}</tbody>
@@ -473,7 +449,7 @@ class ControlPanel2 extends React.Component {
           {this.state.currentPage > 1 && (
             <Pagination.First
               onClick={() => {
-                this.handleCurrentPageChange(1)
+                this.handlePageFlip(1)
               }}
             />
           )}
@@ -481,7 +457,7 @@ class ControlPanel2 extends React.Component {
             <Pagination.Prev
               onClick={() => {
                 const m1 = this.state.currentPage - 1
-                this.handleCurrentPageChange(m1)
+                this.handlePageFlip(m1)
               }}
             />
           )}
@@ -489,7 +465,7 @@ class ControlPanel2 extends React.Component {
             <Pagination.Item
               onClick={() => {
                 const m2 = this.state.currentPage - 2
-                this.handleCurrentPageChange(m2)
+                this.handlePageFlip(m2)
               }}
             >
               {this.state.currentPage - 2}
@@ -499,23 +475,21 @@ class ControlPanel2 extends React.Component {
             <Pagination.Item
               onClick={() => {
                 const m1 = this.state.currentPage - 1
-                this.handleCurrentPageChange(m1)
+                this.handlePageFlip(m1)
               }}
             >
               {this.state.currentPage - 1}
             </Pagination.Item>
           )}
           {this.list !== undefined && (
-            <Pagination.Item onClick={this.jumpTo}>
-              Current Page: {this.state.currentPage}
-            </Pagination.Item>
+            <Pagination.Item active>{this.state.currentPage}</Pagination.Item>
           )}
           {this.state.currentPage + 1 <=
             (this.state.map60.size / this.state.pageSize).toFixed(0) && (
             <Pagination.Item
               onClick={() => {
                 const p1 = this.state.currentPage + 1
-                this.handleCurrentPageChange(p1)
+                this.handlePageFlip(p1)
               }}
             >
               {this.state.currentPage + 1}
@@ -526,7 +500,7 @@ class ControlPanel2 extends React.Component {
             <Pagination.Item
               onClick={() => {
                 const p2 = this.state.currentPage + 2
-                this.handleCurrentPageChange(p2)
+                this.handlePageFlip(p2)
               }}
             >
               {this.state.currentPage + 2}
@@ -537,7 +511,7 @@ class ControlPanel2 extends React.Component {
             <Pagination.Next
               onClick={() => {
                 const n = this.state.currentPage + 1
-                this.handleCurrentPageChange(n)
+                this.handlePageFlip(n)
               }}
             />
           )}
@@ -548,7 +522,7 @@ class ControlPanel2 extends React.Component {
                 const end = (
                   this.state.map60.size / this.state.pageSize
                 ).toFixed(0)
-                this.handleCurrentPageChange(end)
+                this.handlePageFlip(end)
               }}
             />
           )}
