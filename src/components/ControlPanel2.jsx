@@ -380,92 +380,95 @@ class ControlPanel2 extends React.Component {
     const pageSize = this.state.pageSize
     const load = this.state.isLoading
     return (
-      <div id="ControlPanel" className="position-relative">
-        <Loading
-          ref={this.loadRef}
-          isLoading={load}
-          toggle={this.handleLoadToggle}
-        ></Loading>
-        <div
-          id="ControlPanelUpper"
-          style={{
-            display: !this.state.isLoading ? 'block' : 'none',
-          }}
-        >
-          <ControlPanelPageSize
-            pageSize={pageSize}
-            onLenChange={this.handlePSChange}
-          />
-        </div>
-        <div
-          id="timer"
-          style={{
-            display: !this.state.isLoading ? 'block' : 'none',
-          }}
-        >
-          {this.update > 0 && (
-            <Countdown
-              date={this.update}
-              key={this.key}
-              onComplete={() => {
-                console.log(this.update)
-                console.log('Complete fired.')
-                if (!this.state.isLoading) {
-                  this.loadRef.current.toggle()
-                }
-              }}
+      <React.Fragment>
+        <div id="ControlPanel" className="position-relative">
+          <Loading
+            ref={this.loadRef}
+            isLoading={load}
+            toggle={this.handleLoadToggle}
+          ></Loading>
+          <div
+            id="ControlPanelUpper"
+            style={{
+              display: !this.state.isLoading ? 'block' : 'none',
+            }}
+          >
+            <ControlPanelPageSize
+              pageSize={pageSize}
+              onLenChange={this.handlePSChange}
             />
-          )}
-        </div>
-        <div
-          id="ControlPanelCenter"
-          style={{
-            display: !this.state.isLoading ? 'block' : 'none',
-          }}
-        >
-          <table id="dataRoot">
-            <thead>
-              <tr>
-                <th id="rankHead">
-                  <div>
-                    <p>Rank</p>
-                  </div>
-                </th>
-                <th id="itemHead">
-                  <div>
-                    <p>Item</p>
-                  </div>
-                </th>
-                <th id="hitsHead5">
-                  <div>
-                    <p>15 minutes</p>
-                  </div>
-                </th>
-                <th id="hitsHead15">
-                  <div>
-                    <p>30 minutes</p>
-                  </div>
-                </th>
-                <th id="hitsHead30">
-                  <div>
-                    <p>1 hour</p>
-                  </div>
-                </th>
-                <th id="chartHead">
-                  <div>
-                    <p>Chart</p>
-                  </div>
-                </th>
-              </tr>
-            </thead>
-            <tbody>{this.state.list}</tbody>
-          </table>
+          </div>
+          <div
+            id="timer"
+            style={{
+              display: !this.state.isLoading ? 'block' : 'none',
+            }}
+          >
+            {this.update > 0 && (
+              <Countdown
+                date={this.update}
+                key={this.key}
+                onComplete={() => {
+                  console.log(this.update)
+                  console.log('Complete fired.')
+                  if (!this.state.isLoading) {
+                    this.loadRef.current.toggle()
+                  }
+                }}
+              />
+            )}
+          </div>
+          <div
+            id="ControlPanelCenter"
+            style={{
+              display: !this.state.isLoading ? 'flex' : 'none',
+            }}
+          >
+            <table id="dataRoot" className="flex-fill">
+              <thead>
+                <tr>
+                  <th id="rankHead" className="flex-fill">
+                    <div>
+                      <p>Rank</p>
+                    </div>
+                  </th>
+                  <th id="itemHead" className="flex-fill">
+                    <div>
+                      <p>Item</p>
+                    </div>
+                  </th>
+                  <th id="hitsHead5" className="flex-fill">
+                    <div>
+                      <p>15 minutes</p>
+                    </div>
+                  </th>
+                  <th id="hitsHead15" className="flex-fill">
+                    <div>
+                      <p>30 minutes</p>
+                    </div>
+                  </th>
+                  <th id="hitsHead30" className="flex-fill">
+                    <div>
+                      <p>1 hour</p>
+                    </div>
+                  </th>
+                  <th id="chartHead" className="flex-fill">
+                    <div>
+                      <p>Chart</p>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>{this.state.list}</tbody>
+            </table>
+          </div>
         </div>
         <Pagination
           id="pagination"
           style={{
-            display: !this.state.isLoading ? 'block' : 'none',
+            display: !this.state.isLoading ? 'flex' : 'none',
           }}
+          className="justify-content-center"
         >
           {this.state.currentPage > 1 && (
             <Pagination.First
@@ -550,7 +553,7 @@ class ControlPanel2 extends React.Component {
             />
           )}
         </Pagination>
-      </div>
+      </React.Fragment>
     )
   }
 }

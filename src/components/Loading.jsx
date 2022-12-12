@@ -18,7 +18,8 @@ class Loading extends React.Component {
     return (
       <Spinner
         animation="grow"
-        style={{ display: this.props.isLoading ? 'block' : 'none' }}
+        style={{ display: this.props.isLoading ? 'flex' : 'none' }}
+        className="mx-auto my-auto"
       >
         <span className="visually-hidden">Loading...</span>
       </Spinner>
