@@ -18,7 +18,7 @@ function ack(event, message) {
 }
 
 function createAndShowLoading() {
-  loader = new BrowserWindow({
+  const loader = new BrowserWindow({
     width: 800,
     height: 600,
     center: true,
@@ -27,9 +27,22 @@ function createAndShowLoading() {
       nodeIntegration: true,
       nodeIntegrationInWorker: true,
     },
+    show: false,
+    frame: false,
+  })
+
+  loader.once('show', () => {
+    const main = createMain()
+    main.webContents.once('dom-ready', () => {
+      console.log('main loaded')
+      main.show()
+      loader.hide()
+      loader.close()
+    })
   })
 
   loader.loadURL(LOADER_WEBPACK_ENTRY)
+  loader.show()
 }
 
 function createMain() {
@@ -46,10 +59,11 @@ function createMain() {
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
   ipcMain.handle(channels.HELLO_EVENT, ack)
+  return mainWindow
 }
 
 app.whenReady().then(() => {
-  createMain()
+  createAndShowLoading()
 })
 
 app.on('window-all-closed', () => {
