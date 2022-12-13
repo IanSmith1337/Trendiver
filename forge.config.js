@@ -4,7 +4,10 @@ module.exports = {
   makers: [
     {
       name: '@electron-forge/maker-squirrel',
-      config: {},
+      config: {
+        authors: 'Ian Smith',
+        description: 'A trend-visualization resource.',
+      },
     },
     {
       name: '@electron-forge/maker-deb',
@@ -12,10 +15,6 @@ module.exports = {
     },
     {
       name: '@electron-forge/maker-rpm',
-      config: {},
-    },
-    {
-      name: '@electron-forge/maker-squirrel',
       config: {},
     },
     {
