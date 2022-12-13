@@ -1,5 +1,7 @@
-const { app, BrowserWindow } = require('electron')
+const { channels } = require('../src/shared/constants.js')
+const { app, BrowserWindow, ipcMain } = require('electron')
 const { path } = require('path')
+const { fs } = require('fs')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -10,17 +12,44 @@ if (require('electron-squirrel-startup')) {
   app.quit()
 }
 
-app.whenReady().then(() => {
+function ack(event, message) {
+  console.log('Hello from the main process! You are: ' + message)
+  return 'Main Process'
+}
+
+function createAndShowLoading() {
+  loader = new BrowserWindow({
+    width: 800,
+    height: 600,
+    center: true,
+    webPreferences: {
+      preload: LOADER_PRELOAD_WEBPACK_ENTRY,
+      nodeIntegration: true,
+      nodeIntegrationInWorker: true,
+    },
+  })
+
+  loader.loadURL(LOADER_WEBPACK_ENTRY)
+}
+
+function createMain() {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    webPreferences: {
-      nodeIntegration: true,
-    },
     center: true,
+    webPreferences: {
+      preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+      nodeIntegration: true,
+      nodeIntegrationInWorker: true,
+    },
   })
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
+  ipcMain.handle(channels.HELLO_EVENT, ack)
+}
+
+app.whenReady().then(() => {
+  createMain()
 })
 
 app.on('window-all-closed', () => {
@@ -33,6 +62,6 @@ app.on('activate', () => {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow()
+    createMain()
   }
 })

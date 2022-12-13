@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { createRoot } from 'react-dom/client'
-import ControlPanel2 from './components/ControlPanel2.jsx'
+import ControlPanel from './components/ControlPanel.jsx'
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
 import { Navbar, Container, InputGroup, Form, Stack } from 'react-bootstrap'
@@ -30,7 +30,13 @@ const config = {
 const FBapp = initializeApp(config)
 const DB = getFirestore(FBapp)
 
+async function MP() {
+  const MPres = await window.TRBack.sendHelloMessage('App.js')
+  console.log('Hello from App.js! You are: ' + MPres)
+}
+
 function init() {
+  MP()
   root.render(
     <>
       <Stack direction="horizontal">
@@ -45,7 +51,7 @@ function init() {
         </Navbar>
       </Stack>
       <Container fluid>
-        <ControlPanel2 DB={DB} />
+        <ControlPanel DB={DB} />
       </Container>
     </>,
   )
