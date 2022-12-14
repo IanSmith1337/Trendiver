@@ -1,5 +1,6 @@
 import React from 'react'
 import { Spinner } from 'react-bootstrap'
+import '../spinner.css'
 
 class Loading extends React.Component {
   constructor(props) {
@@ -16,13 +17,15 @@ class Loading extends React.Component {
   }
   render() {
     return (
-      <Spinner
-        animation="grow"
+      <div
+        className="spin"
         style={{ display: this.props.isLoading ? 'flex' : 'none' }}
-        className="mx-auto my-auto"
       >
-        <span className="visually-hidden">Loading...</span>
-      </Spinner>
+        <div>
+          <Spinner animation="border"></Spinner>
+        </div>
+        <span>Loading... Please wait...</span>
+      </div>
     )
   }
 }

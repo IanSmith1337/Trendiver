@@ -30,13 +30,14 @@ const config = {
 const FBapp = initializeApp(config)
 const DB = getFirestore(FBapp)
 
-async function MP() {
-  const MPres = await window.TRBack.sendHelloMessage('App.js')
-  console.log('Hello from App.js! You are: ' + MPres)
+document.onreadystatechange = () => {
+  if (document.readyState === 'complete') {
+    console.log('Send time: ' + new Date())
+    window.TRBack.loadComplete()
+  }
 }
 
 function init() {
-  MP()
   root.render(
     <>
       <Stack direction="horizontal">

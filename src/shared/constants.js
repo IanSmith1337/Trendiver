@@ -1,5 +1,5 @@
 module.exports = {
   channels: {
-    HELLO_EVENT: 'hello',
+    LOAD_COMPLETE: 'ld',
   },
 }
