@@ -39,6 +39,9 @@ function createAndShowLoading() {
     ipcMain.once(channels.LOAD_COMPLETE, () => {
       ack(main, loader)
     })
+    if (BG === null) {
+      createBG()
+    }
     const main = createMain()
   })
 }

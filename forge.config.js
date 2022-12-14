@@ -45,6 +45,14 @@ module.exports = {
               html: './src/loading.html',
               js: './src/loadRenderer.js',
             },
+            {
+              name: 'bg',
+              html: './src/bg.html',
+              js: './src/bgRenderer.js',
+              preload: {
+                js: './src/bgPreload.js',
+              },
+            },
           ],
         },
       },
