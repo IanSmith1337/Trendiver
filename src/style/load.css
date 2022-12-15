@@ -1,0 +1,8 @@
+.content {
+  display: flex;
+  width: 100%;
+  height: calc(100vh - 10vh);
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}

@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react'
-import ReactDOM from 'react-dom'
+import React from 'react'
 import { createRoot } from 'react-dom/client'
 import ControlPanel from './components/ControlPanel.jsx'
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
-import { Navbar, Container, InputGroup, Form, Stack } from 'react-bootstrap'
+import { Navbar, Container, Stack } from 'react-bootstrap'
+import '../scss/custom.scss'
 import '../src/style/index.css'
-import { Search } from 'react-bootstrap-icons'
 import SearchComp from './components/SearchComp.jsx'
 
 const root = createRoot(document.getElementById('root'))
@@ -39,22 +38,32 @@ document.onreadystatechange = () => {
 
 function init() {
   root.render(
-    <>
+    <div id="contents" className="bg-primary">
       <Stack direction="horizontal">
-        <Navbar variant="dark" bg="dark" className="px-4">
+        <Navbar
+          id="titleBar"
+          variant="dark"
+          bg="secondary"
+          className="px-4 border-bottom border-right border-opacity-50 border-2"
+        >
           <Navbar.Brand href="#" className="me-0">
             Trendiver
           </Navbar.Brand>
         </Navbar>
         <div className="ms-auto"></div>
-        <Navbar variant="dark" bg="dark" className="px-4">
+        <Navbar
+          id="searchBar"
+          variant="dark"
+          bg="secondary"
+          className="px-4 border-bottom border-left border-opacity-50 border-2"
+        >
           <SearchComp DB={DB} />
         </Navbar>
       </Stack>
       <Container fluid>
         <ControlPanel DB={DB} />
       </Container>
-    </>,
+    </div>,
   )
 }
 

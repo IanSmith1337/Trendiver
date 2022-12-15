@@ -1,8 +1,8 @@
 import React from 'react'
 import { Spinner } from 'react-bootstrap'
-import '../spinner.css'
+import '../style/spinner.css'
 
-class Loading extends React.Component {
+class LoadingComp extends React.Component {
   constructor(props) {
     super(props)
     this.toggle = this.toggle.bind(this)
@@ -30,4 +30,4 @@ class Loading extends React.Component {
   }
 }
 
-export default Loading
+export default LoadingComp

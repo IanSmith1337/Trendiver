@@ -7,7 +7,7 @@ import {
   orderBy,
   limit,
 } from 'firebase/firestore'
-import Loading from './Loading.jsx'
+import LoadingComp from './LoadingComp.jsx'
 import { Pagination } from 'react-bootstrap'
 import Countdown from 'react-countdown'
 
@@ -363,11 +363,11 @@ class ControlPanel extends React.Component {
     return (
       <React.Fragment>
         <div id="ControlPanel" className="position-relative">
-          <Loading
+          <LoadingComp
             ref={this.loadRef}
             isLoading={load}
             toggle={this.handleLoadToggle}
-          ></Loading>
+          ></LoadingComp>
           <div
             id="ControlPanelUpper"
             style={{

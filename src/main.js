@@ -73,6 +73,7 @@ function createBG() {
     show: false,
   })
 
+  BG.excludedFromShownWindowsMenu = true
   BG.loadURL(BG_WEBPACK_ENTRY)
 }
 
