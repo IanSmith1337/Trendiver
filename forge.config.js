@@ -41,14 +41,14 @@ module.exports = {
               },
             },
             {
-              name: 'loader',
               html: './src/loading.html',
               js: './src/loadRenderer.js',
+              name: 'loader',
             },
             {
-              name: 'bg',
               html: './src/bg.html',
               js: './src/bgRenderer.js',
+              name: 'bg',
               preload: {
                 js: './src/bgPreload.js',
               },
