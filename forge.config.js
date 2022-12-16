@@ -33,24 +33,24 @@ module.exports = {
           config: './webpack.renderer.config.js',
           entryPoints: [
             {
-              html: './src/index.html',
-              js: './src/renderer.js',
+              html: './src/mainWindow/public/index.html',
+              js: './src/mainWindow/renderer.js',
               name: 'main_window',
               preload: {
-                js: './src/preload.js',
+                js: './src/mainWindow/preload.js',
               },
             },
             {
-              html: './src/loading.html',
-              js: './src/loadRenderer.js',
+              html: './src/loadingWindow/public/loading.html',
+              js: './src/loadingWindow/loadRenderer.js',
               name: 'loader',
             },
             {
-              html: './src/bg.html',
-              js: './src/bgRenderer.js',
+              html: './src/helper/public/helper.html',
+              js: './src/helper/helperRenderer.js',
               name: 'bg',
               preload: {
-                js: './src/bgPreload.js',
+                js: './src/helper/helperPreload.js',
               },
             },
           ],

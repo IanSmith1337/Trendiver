@@ -4,8 +4,8 @@ import ControlPanel from './components/ControlPanel.jsx'
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
 import { Navbar, Container, Stack } from 'react-bootstrap'
-import '../scss/custom.scss'
-import '../src/style/index.css'
+import '../../scss/custom.scss'
+import './style/main.css'
 import SearchComp from './components/SearchComp.jsx'
 
 const root = createRoot(document.getElementById('root'))
@@ -40,13 +40,7 @@ function init() {
   root.render(
     <div id="contents">
       <Stack direction="horizontal">
-        <div className="ms-auto"></div>
-        <Navbar
-          id="searchBar"
-          variant="dark"
-          bg="secondary"
-          className="px-4 border-bottom border-left border-opacity-50 border-2"
-        >
+        <Navbar id="searchBar" variant="dark" bg="secondary">
           <SearchComp DB={DB} />
         </Navbar>
       </Stack>

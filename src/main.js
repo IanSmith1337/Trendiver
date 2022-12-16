@@ -10,6 +10,9 @@ let BG = null
 let mainWindow = null
 let secondaryWindow = null
 
+// define other constants
+let first = null
+
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   app.quit()
@@ -17,7 +20,7 @@ if (require('electron-squirrel-startup')) {
 
 function ack(m, l) {
   console.log("Rec'd time: " + new Date())
-  m.show()
+  m.maximize()
   l.hide()
   l.close()
 }
@@ -60,7 +63,6 @@ function createMain() {
     titleBarStyle: 'hidden',
   })
 
-  mainWindow.maximize()
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
   return mainWindow
 }
@@ -77,8 +79,8 @@ function createSecondary() {
     titleBarStyle: 'hidden',
   })
 
-  secondaryWindow.maximize()
   secondaryWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
+  secondaryWindow.maximize()
 }
 
 function createBG() {
@@ -102,8 +104,10 @@ app.whenReady().then(() => {
     // On OS X it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     console.log(BrowserWindow.getAllWindows().length)
-    if (BrowserWindow.getAllWindows().length === 1) {
+    if (BrowserWindow.getAllWindows().length === 1 && !first) {
       createSecondary()
+    } else {
+      first = false
     }
   })
 })

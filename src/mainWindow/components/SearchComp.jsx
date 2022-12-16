@@ -6,7 +6,7 @@ import {
   Dropdown,
   DropdownButton,
 } from 'react-bootstrap'
-import { X, Search } from 'react-bootstrap-icons'
+import { Search } from 'react-bootstrap-icons'
 
 var to = null
 
@@ -35,9 +35,7 @@ class SearchComp extends React.Component {
     return (
       <React.Fragment>
         {!this.state.shouldClose ? (
-          <Button id="searchOpen" variant="dark" onClick={this.toggleClose}>
-            <Search color="white" />
-          </Button>
+          <Search color="black" />
         ) : (
           <InputGroup id="searchInput">
             <DropdownButton
