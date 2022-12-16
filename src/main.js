@@ -60,6 +60,7 @@ function createMain() {
     titleBarStyle: 'hidden',
   })
 
+  mainWindow.maximize()
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
   return mainWindow
 }
@@ -76,6 +77,7 @@ function createSecondary() {
     titleBarStyle: 'hidden',
   })
 
+  secondaryWindow.maximize()
   secondaryWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
 }
 

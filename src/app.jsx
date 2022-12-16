@@ -38,18 +38,8 @@ document.onreadystatechange = () => {
 
 function init() {
   root.render(
-    <div id="contents" className="bg-primary">
+    <div id="contents">
       <Stack direction="horizontal">
-        <Navbar
-          id="titleBar"
-          variant="dark"
-          bg="secondary"
-          className="px-4 border-bottom border-right border-opacity-50 border-2"
-        >
-          <Navbar.Brand href="#" className="me-0">
-            Trendiver
-          </Navbar.Brand>
-        </Navbar>
         <div className="ms-auto"></div>
         <Navbar
           id="searchBar"

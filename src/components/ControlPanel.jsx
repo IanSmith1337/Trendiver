@@ -1,5 +1,4 @@
 import React from 'react'
-import ControlPanelPageSize from './ControlPanelPageSize.jsx'
 import {
   onSnapshot,
   query,
@@ -18,7 +17,6 @@ var stop60 = null
 class ControlPanel extends React.Component {
   constructor(props) {
     super(props)
-    this.handlePSChange = this.handlePSChange.bind(this)
     this.handlePageFlip = this.handlePageFlip.bind(this)
     this.updateList = this.updateList.bind(this)
     this.Subscribe = this.Subscribe.bind(this)
@@ -29,7 +27,6 @@ class ControlPanel extends React.Component {
       map15: new Map(),
       map30: new Map(),
       map60: new Map(),
-      pageSize: 25,
       currentPage: 1,
       query: undefined,
       list: [],
@@ -274,15 +271,14 @@ class ControlPanel extends React.Component {
   updateList() {
     if (
       this.state.map60.size !== null &&
-      (this.state.map60.size > this.state.pageSize ||
-        this.state.currentPage - 1 > 0)
+      (this.state.map60.size > 15 || this.state.currentPage - 1 > 0)
     ) {
       var listItems = []
-      const startPoint = (this.state.currentPage - 1) * this.state.pageSize
+      const startPoint = (this.state.currentPage - 1) * 15
       const endPoint =
         this.state.map60.size !== null &&
-        this.state.map60.size >= this.state.currentPage * this.state.pageSize
-          ? this.state.currentPage * this.state.pageSize
+        this.state.map60.size >= this.state.currentPage * 15
+          ? this.state.currentPage * 15
           : this.state.map60.size - 1
       for (var i = startPoint; i < endPoint; i++) {
         const index = Array.from(this.state.map60.keys())[i]
@@ -347,18 +343,7 @@ class ControlPanel extends React.Component {
     })
   }
 
-  handlePSChange(Page) {
-    const node = this.loadRef.current
-    node.toggle()
-    this.setState({ currentPage: 1, pageSize: Page }, () => {
-      this.setState({ list: this.updateList() }, () => {
-        node.toggle()
-      })
-    })
-  }
-
   render() {
-    const pageSize = this.state.pageSize
     const load = this.state.isLoading
     return (
       <React.Fragment>
@@ -368,17 +353,6 @@ class ControlPanel extends React.Component {
             isLoading={load}
             toggle={this.handleLoadToggle}
           ></LoadingComp>
-          <div
-            id="ControlPanelUpper"
-            style={{
-              display: !this.state.isLoading ? 'block' : 'none',
-            }}
-          >
-            <ControlPanelPageSize
-              pageSize={pageSize}
-              onLenChange={this.handlePSChange}
-            />
-          </div>
           <div
             id="timer"
             style={{
@@ -485,7 +459,7 @@ class ControlPanel extends React.Component {
             <Pagination.Item active>{this.state.currentPage}</Pagination.Item>
           )}
           {this.state.currentPage + 1 <=
-            (this.state.map60.size / this.state.pageSize).toFixed(0) && (
+            (this.state.map60.size / 15).toFixed(0) && (
             <Pagination.Item
               onClick={() => {
                 const p1 = this.state.currentPage + 1
@@ -496,7 +470,7 @@ class ControlPanel extends React.Component {
             </Pagination.Item>
           )}
           {this.state.currentPage + 2 <=
-            (this.state.map60.size / this.state.pageSize).toFixed(0) && (
+            (this.state.map60.size / 15).toFixed(0) && (
             <Pagination.Item
               onClick={() => {
                 const p2 = this.state.currentPage + 2
@@ -507,7 +481,7 @@ class ControlPanel extends React.Component {
             </Pagination.Item>
           )}
           {this.state.currentPage + 1 <=
-            (this.state.map60.size / this.state.pageSize).toFixed(0) && (
+            (this.state.map60.size / 15).toFixed(0) && (
             <Pagination.Next
               onClick={() => {
                 const n = this.state.currentPage + 1
@@ -515,13 +489,10 @@ class ControlPanel extends React.Component {
               }}
             />
           )}
-          {this.state.currentPage <
-            (this.state.map60.size / this.state.pageSize).toFixed(0) && (
+          {this.state.currentPage < (this.state.map60.size / 15).toFixed(0) && (
             <Pagination.Last
               onClick={() => {
-                const end = (
-                  this.state.map60.size / this.state.pageSize
-                ).toFixed(0)
+                const end = (this.state.map60.size / 15).toFixed(0)
                 this.handlePageFlip(end)
               }}
             />
