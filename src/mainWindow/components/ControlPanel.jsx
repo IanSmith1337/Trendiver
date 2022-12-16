@@ -6,9 +6,7 @@ import {
   orderBy,
   limit,
 } from 'firebase/firestore'
-import LoadingComp from './LoadingComp.jsx'
 import { Pagination } from 'react-bootstrap'
-import Countdown from 'react-countdown'
 
 var stop15 = null
 var stop30 = null
@@ -20,21 +18,16 @@ class ControlPanel extends React.Component {
     this.handlePageFlip = this.handlePageFlip.bind(this)
     this.updateList = this.updateList.bind(this)
     this.Subscribe = this.Subscribe.bind(this)
-    this.handleLoadToggle = this.handleLoadToggle.bind(this)
     this.firstTime = true
-    this.update = 0
     this.state = {
       map15: new Map(),
       map30: new Map(),
       map60: new Map(),
       currentPage: 1,
-      query: undefined,
       list: [],
-      isLoading: true,
       sorting: 60,
     }
-    this.loadRef = React.createRef()
-    this.key = this.update
+    this.time = new Date()
     this.q1 = new query(
       collection(this.props.DB, 'cycles'),
       orderBy('Time', 'desc'),
@@ -66,6 +59,9 @@ class ControlPanel extends React.Component {
   }
 
   Subscribe() {
+    if (!this.props.isLoading) {
+      this.props.toggle(true)
+    }
     stop60 = onSnapshot(this.q3, (snap) => {
       if (!this.firstTime) {
         snap.docChanges().forEach((change) => {
@@ -116,10 +112,9 @@ class ControlPanel extends React.Component {
             console.log('(60 Min) Sorted. Updating list...')
             this.setState({ list: this.updateList() }, () => {
               console.log('(60 Min) List state updated.')
-              if (this.state.isLoading) {
-                const node = this.loadRef.current
-                node.toggle()
-                this.key = this.update / 1000
+              if (this.props.isLoading) {
+                this.props.toggle(false)
+                this.props.setTimeKey(this.props.lastTime / 1000)
               }
             })
           },
@@ -180,10 +175,10 @@ class ControlPanel extends React.Component {
             console.log('(30 Min) Sorted. Updating list...')
             this.setState({ list: this.updateList() }, () => {
               console.log('(30 Min) List state updated.')
-              if (this.state.isLoading) {
-                const node = this.loadRef.current
-                node.toggle()
-                this.key = this.update / 1000
+
+              if (this.props.isLoading) {
+                this.props.toggle(false)
+                this.props.setTimeKey(this.props.lastTime / 1000)
               }
             })
           },
@@ -233,14 +228,15 @@ class ControlPanel extends React.Component {
                 this.state.map15.set(entity, 0)
               }
             } else {
-              if (element * 1000 + 305000 >= this.update) {
-                this.update = new Date(element * 1000 + 305000)
+              if (element * 1000 + 305000 >= this.time) {
+                this.time = new Date(element * 1000 + 305000)
               }
             }
           }
         }
       })
       console.log('(15 Min) Finished gathering 15 min data.')
+      this.props.setNextTime(this.time)
       if (this.state.sorting == 15) {
         this.setState(
           {
@@ -252,20 +248,15 @@ class ControlPanel extends React.Component {
             console.log('(15 Min) Sorted. Updating list...')
             this.setState({ list: this.updateList() }, () => {
               console.log('(15 Min) List state updated.')
-              if (this.state.isLoading) {
-                const node = this.loadRef.current
-                node.toggle()
-                this.key = this.update / 1000
+              if (this.props.isLoading) {
+                this.props.toggle(false)
+                this.props.setTimeKey(this.props.lastTime / 1000)
               }
             })
           },
         )
       }
     })
-  }
-
-  handleLoadToggle(t) {
-    this.setState({ isLoading: t })
   }
 
   updateList() {
@@ -334,49 +325,22 @@ class ControlPanel extends React.Component {
   }
 
   handlePageFlip(current) {
-    const node = this.loadRef.current
-    node.toggle()
+    this.props.toggle(true)
     this.setState({ currentPage: current }, () => {
       this.setState({ list: this.updateList() }, () => {
-        node.toggle()
+        this.props.toggle(false)
       })
     })
   }
 
   render() {
-    const load = this.state.isLoading
     return (
       <React.Fragment>
         <div id="ControlPanel" className="position-relative">
-          <LoadingComp
-            ref={this.loadRef}
-            isLoading={load}
-            toggle={this.handleLoadToggle}
-          ></LoadingComp>
-          <div
-            id="timer"
-            style={{
-              display: !this.state.isLoading ? 'block' : 'none',
-            }}
-          >
-            {this.update > 0 && (
-              <Countdown
-                date={this.update}
-                key={this.key}
-                onComplete={() => {
-                  console.log(this.update)
-                  console.log('Complete fired.')
-                  if (!this.state.isLoading) {
-                    this.loadRef.current.toggle()
-                  }
-                }}
-              />
-            )}
-          </div>
           <div
             id="ControlPanelCenter"
             style={{
-              display: !this.state.isLoading ? 'flex' : 'none',
+              display: !this.props.isLoading ? 'flex' : 'none',
             }}
           >
             <table id="dataRoot" className="flex-fill">
@@ -416,7 +380,7 @@ class ControlPanel extends React.Component {
         <Pagination
           id="pagination"
           style={{
-            display: !this.state.isLoading ? 'flex' : 'none',
+            display: !this.props.isLoading ? 'flex' : 'none',
           }}
           className="justify-content-center"
         >
