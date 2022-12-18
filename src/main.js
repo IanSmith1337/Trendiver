@@ -52,8 +52,7 @@ var stop15 = null
 var stop30 = null
 var stop60 = null
 var firstRun = true
-var timeKey = ''
-var lastTime = 0
+var timeKey = 0
 var time = new Date()
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -69,143 +68,157 @@ function ack(m, l) {
 }
 
 function createSubs() {
-  stop60 = onSnapshot(queries[2], (snap) => {
-    if (!firstRun) {
-      snap.docChanges().forEach((change) => {
-        if (change.type === 'added') {
-          console.log('(60 Min) Add: ' + change.doc.id)
-        }
-        if (change.type === 'removed') {
-          console.log('(60 Min) Remove: ' + change.doc.id)
-        }
-      })
-      console.log('Update found, reloading list...')
-    } else {
-      console.log('First run.')
-      snap.docChanges().forEach((change) => {
-        console.log('(60 Min) Add: ' + change.doc.id)
-      })
-      firstRun = false
-      console.log('(60 Min) Listener created.')
-    }
-    maps[2].clear()
-    snap.forEach((doc) => {
-      const currentDocData = doc.data()
-      for (const entity in currentDocData) {
-        if (Object.hasOwnProperty.call(currentDocData, entity)) {
-          const element = currentDocData[entity]
-          if (entity !== 'Time') {
-            if (maps[2].has(entity)) {
-              maps[2] = maps[2].set(entity, maps[2].get(entity) + element)
-            } else {
-              maps[2] = maps[2].set(entity, element)
-            }
+  if (stop60 === null && stop30 === null && stop15 === null) {
+    console.log('No dupes detected.')
+    stop60 = onSnapshot(queries[2], (snap) => {
+      if (!firstRun) {
+        snap.docChanges().forEach((change) => {
+          if (change.type === 'added') {
+            console.log('(60 Min) Add: ' + change.doc.id)
           }
-        }
+          if (change.type === 'removed') {
+            console.log('(60 Min) Remove: ' + change.doc.id)
+          }
+        })
+        console.log('(60 Min) Update found, reloading list...')
+      } else {
+        console.log('First run.')
+        snap.docChanges().forEach((change) => {
+          console.log('(60 Min) Add: ' + change.doc.id)
+        })
+        firstRun = false
+        console.log('(60 Min) Listener created.')
       }
-    })
-    console.log('(60 Min) Finished gathering 60 min data.')
-    if (sorting == 60) {
-      maps[2] = new Map([...maps[2].entries()].sort((a, b) => b[1] - a[1]))
-      console.log('(60 Min) Sorted.')
-      timeKey = lastTime / 1000
-    }
-  })
-  stop30 = onSnapshot(queries[1], (snap) => {
-    if (!firstRun) {
-      snap.docChanges().forEach((change) => {
-        if (change.type === 'added') {
-          console.log('(30 Min) Add: ' + change.doc.id)
-        }
-        if (change.type === 'removed') {
-          console.log('(30 Min) Remove: ' + change.doc.id)
-        }
-      })
-      console.log('(30 Min) Update found, reloading list...')
-    } else {
-      console.log('(30 Min) First run.')
-      snap.docChanges().forEach((change) => {
-        console.log('(30 Min) Add: ' + change.doc.id)
-      })
-      firstRun = false
-      console.log('(30 Min) Listener created.')
-    }
-    maps[1].clear()
-    snap.forEach((doc) => {
-      const currentDocData = doc.data()
-      for (const entity in currentDocData) {
-        if (Object.hasOwnProperty.call(currentDocData, entity)) {
-          const element = currentDocData[entity]
-          if (entity !== 'Time') {
-            if (maps[2].has(entity)) {
-              if (maps[1].has(entity)) {
-                maps[1] = maps[1].set(entity, maps[1].get(entity) + element)
+      maps[2].clear()
+      snap.forEach((doc) => {
+        const currentDocData = doc.data()
+        for (const entity in currentDocData) {
+          if (Object.hasOwnProperty.call(currentDocData, entity)) {
+            const element = currentDocData[entity]
+            if (entity !== 'Time') {
+              if (maps[2].has(entity)) {
+                maps[2] = maps[2].set(entity, maps[2].get(entity) + element)
               } else {
-                maps[1] = maps[1].set(entity, element)
+                maps[2] = maps[2].set(entity, element)
+              }
+            } else {
+              if (element * 1000 + 305000 >= time) {
+                time = new Date(element * 1000 + 305000)
               }
             }
           }
         }
+      })
+      console.log('(60 Min) Finished gathering 60 min data.')
+      if (sorting == 60) {
+        maps[2] = new Map([...maps[2].entries()].sort((a, b) => b[1] - a[1]))
+        console.log('(60 Min) Sorted.')
+        timeKey = time / 1000
       }
     })
-    console.log('(30 Min) Finished gathering 30 min data.')
-    if (sorting == 30) {
-      maps[1] = new Map([...maps[1].entries()].sort((a, b) => b[1] - a[1]))
-      console.log('(30 Min) Sorted.')
-      timeKey = lastTime / 1000
-    }
-  })
-  stop15 = onSnapshot(queries[0], (snap) => {
-    if (!firstRun) {
-      snap.docChanges().forEach((change) => {
-        if (change.type === 'added') {
-          console.log('(15 Min) Add: ' + change.doc.id)
-        }
-        if (change.type === 'removed') {
-          console.log('(15 Min) Remove: ' + change.doc.id)
-        }
-      })
-      console.log('(15 Min) Update found, reloading list...')
-    } else {
-      console.log('(15 Min) First run.')
-      snap.docChanges().forEach((change) => {
-        console.log('(15 Min) Add: ' + change.doc.id)
-      })
-      firstRun = false
-      console.log('(15 Min) Listener created.')
-    }
-    maps[0].clear()
-    snap.forEach((doc) => {
-      const currentDocData = doc.data()
-      for (const entity in currentDocData) {
-        if (Object.hasOwnProperty.call(currentDocData, entity)) {
-          const element = currentDocData[entity]
-          if (entity !== 'Time') {
-            if (maps[2].has(entity)) {
-              if (maps[1].has(entity)) {
-                if (maps[0].has(entity)) {
-                  maps[0] = maps[0].set(entity, maps[0].get(entity) + element)
+    stop30 = onSnapshot(queries[1], (snap) => {
+      if (!firstRun) {
+        snap.docChanges().forEach((change) => {
+          if (change.type === 'added') {
+            console.log('(30 Min) Add: ' + change.doc.id)
+          }
+          if (change.type === 'removed') {
+            console.log('(30 Min) Remove: ' + change.doc.id)
+          }
+        })
+        console.log('(30 Min) Update found, reloading list...')
+      } else {
+        console.log('(30 Min) First run.')
+        snap.docChanges().forEach((change) => {
+          console.log('(30 Min) Add: ' + change.doc.id)
+        })
+        firstRun = false
+        console.log('(30 Min) Listener created.')
+      }
+      maps[1].clear()
+      snap.forEach((doc) => {
+        const currentDocData = doc.data()
+        for (const entity in currentDocData) {
+          if (Object.hasOwnProperty.call(currentDocData, entity)) {
+            const element = currentDocData[entity]
+            if (entity !== 'Time') {
+              if (maps[2].has(entity)) {
+                if (maps[1].has(entity)) {
+                  maps[1] = maps[1].set(entity, maps[1].get(entity) + element)
                 } else {
-                  maps[0] = maps[0].set(entity, element)
+                  maps[1] = maps[1].set(entity, element)
                 }
               }
-            }
-          } else {
-            if (element * 1000 + 305000 >= time) {
-              time = new Date(element * 1000 + 305000)
+            } else {
+              if (element * 1000 + 305000 >= time) {
+                time = new Date(element * 1000 + 305000)
+              }
             }
           }
         }
+      })
+      console.log('(30 Min) Finished gathering 30 min data.')
+      if (sorting == 30) {
+        maps[1] = new Map([...maps[1].entries()].sort((a, b) => b[1] - a[1]))
+        console.log('(30 Min) Sorted.')
+        timeKey = time / 1000
       }
     })
-    console.log('(15 Min) Finished gathering 15 min data.')
-    if (sorting == 15) {
-      maps[0] = new Map([...maps[0].entries()].sort((a, b) => b[1] - a[1]))
-      console.log('(15 Min) Sorted.')
-      timeKey = lastTime / 1000
-    }
+    stop15 = onSnapshot(queries[0], (snap) => {
+      if (!firstRun) {
+        snap.docChanges().forEach((change) => {
+          if (change.type === 'added') {
+            console.log('(15 Min) Add: ' + change.doc.id)
+          }
+          if (change.type === 'removed') {
+            console.log('(15 Min) Remove: ' + change.doc.id)
+          }
+        })
+        console.log('(15 Min) Update found, reloading list...')
+      } else {
+        console.log('(15 Min) First run.')
+        snap.docChanges().forEach((change) => {
+          console.log('(15 Min) Add: ' + change.doc.id)
+        })
+        firstRun = false
+        console.log('(15 Min) Listener created.')
+      }
+      maps[0].clear()
+      snap.forEach((doc) => {
+        const currentDocData = doc.data()
+        for (const entity in currentDocData) {
+          if (Object.hasOwnProperty.call(currentDocData, entity)) {
+            const element = currentDocData[entity]
+            if (entity !== 'Time') {
+              if (maps[2].has(entity)) {
+                if (maps[1].has(entity)) {
+                  if (maps[0].has(entity)) {
+                    maps[0] = maps[0].set(entity, maps[0].get(entity) + element)
+                  } else {
+                    maps[0] = maps[0].set(entity, element)
+                  }
+                }
+              }
+            } else {
+              if (element * 1000 + 305000 >= time) {
+                time = new Date(element * 1000 + 305000)
+              }
+            }
+          }
+        }
+      })
+      console.log('(15 Min) Finished gathering 15 min data.')
+      if (sorting == 15) {
+        maps[0] = new Map([...maps[0].entries()].sort((a, b) => b[1] - a[1]))
+        console.log('(15 Min) Sorted.')
+        timeKey = time / 1000
+      }
+      mainWindow.webContents.send(channels.SUBSCRIPTION_UPDATE)
+    })
+  } else {
+    console.log('Dupes found, not creating.')
     mainWindow.webContents.send(channels.SUBSCRIPTION_UPDATE)
-  })
+  }
 }
 
 function removeSubs() {
@@ -251,22 +264,29 @@ function createMain() {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
       nodeIntegration: true,
     },
-    show: false,
     titleBarStyle: 'hidden',
   })
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
 
+  console.log('cleaning listeners')
+
+  ipcMain.removeAllListeners(channels.SUBSCRIBE)
+  ipcMain.removeAllListeners(channels.GET_FB_DATA)
+  mainWindow.removeAllListeners('close')
+
   ipcMain.on(channels.SUBSCRIBE, () => {
-    removeSubs()
+    console.log('Attaching subscriptions')
     createSubs()
   })
 
-  ipcMain.on(channels.UNSUBSCRIBE, () => {
+  mainWindow.on('close', () => {
+    console.log('removing subscriptions.')
     removeSubs()
   })
 
   ipcMain.handle(channels.GET_FB_DATA, () => {
+    console.log('getting data...')
     return getMapsTimeAndKey()
   })
 
@@ -280,4 +300,10 @@ app.whenReady().then(() => {
 app.on('window-all-closed', () => {
   removeSubs()
   app.quit()
+})
+
+app.on('render-process-gone', (event, webContents, details) => {
+  removeSubs()
+  console.error('The app crashed. Reason: ' + details.reason)
+  app.exit(details.exitCode)
 })

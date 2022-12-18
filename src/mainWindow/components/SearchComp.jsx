@@ -34,36 +34,9 @@ class SearchComp extends React.Component {
   render() {
     return (
       <React.Fragment>
-        {!this.state.shouldClose ? (
-          <Search color="black" />
-        ) : (
-          <InputGroup id="searchInput">
-            <DropdownButton
-              variant="info"
-              title={this.state.user ? '@' : '#'}
-              id="searchType"
-              onClick={() => {
-                if (to !== null) {
-                  to = setTimeout(this.toggleClose, 10000)
-                }
-              }}
-            >
-              <Dropdown.Item onClick={this.toggleUser}>
-                {this.state.user ? '#' : '@'}
-              </Dropdown.Item>
-            </DropdownButton>
-            <Form.Control
-              id="searchTextBox"
-              placeholder={this.state.user ? '@name' : '#topic'}
-              aria-label={this.state.user ? 'Username' : 'Hashtag'}
-              aria-describedby={this.state.user ? 'AtSign' : 'HashSign'}
-              autoFocus
-              onBlur={() => {
-                to = setTimeout(this.toggleClose, 10000)
-              }}
-            />
-          </InputGroup>
-        )}
+        <Button variant="link" className="mx-0 my-0 px-2 py-0">
+          <Search color="black" className="my-1" size={14} />
+        </Button>
       </React.Fragment>
     )
   }
