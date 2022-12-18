@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import ControlPanel from './ControlPanel.jsx'
+import DBReader from './DBReader.jsx'
 import SearchComp from './SearchComp.jsx'
 import LoadingComp from './LoadingComp.jsx'
 import TimerComp from './TimerComp.jsx'
@@ -55,7 +55,7 @@ export default class UI extends React.Component {
         </Stack>
         <Container fluid>
           <LoadingComp isLoading={l}></LoadingComp>
-          <ControlPanel
+          <DBReader
             isLoading={l}
             lastTime={u}
             setNextTime={this.handleUpdateChange}

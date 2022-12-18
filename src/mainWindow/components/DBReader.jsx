@@ -1,7 +1,7 @@
 import React from 'react'
 import { Pagination } from 'react-bootstrap'
 
-class ControlPanel extends React.Component {
+class DBReader extends React.Component {
   constructor(props) {
     super(props)
     this.handlePageFlip = this.handlePageFlip.bind(this)
@@ -242,4 +242,4 @@ class ControlPanel extends React.Component {
   }
 }
 
-export default ControlPanel
+export default DBReader
