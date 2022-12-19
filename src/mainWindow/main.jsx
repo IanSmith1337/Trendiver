@@ -46,6 +46,7 @@ const App = () => {
     } while (!ready)
     const data = await window.TRBack.getDataFromFB()
     console.log(data)
+    setPage(1)
     setMaps(data[0])
     setUpdate(data[1])
     setTimeKey(data[2])
