@@ -39,6 +39,11 @@ const App = () => {
     if (!isLoading) {
       setLoading(true)
     }
+    var ready = false
+    do {
+      ready = await window.TRBack.getReady()
+      await new Promise((r) => setTimeout(r, 1000))
+    } while (!ready)
     const data = await window.TRBack.getDataFromFB()
     console.log(data)
     setMaps(data[0])
@@ -54,7 +59,7 @@ const App = () => {
     console.log('Updating list.')
     updateList()
     setLoading(false)
-  }, [timeKey])
+  }, [update, page])
 
   function updateList() {
     if (maps[2].size !== null && (maps[2].size > 15 || page - 1 > 0)) {

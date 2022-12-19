@@ -54,6 +54,7 @@ var stop60 = null
 var firstRun = true
 var timeKey = 0
 var time = new Date()
+var ready = false
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -213,9 +214,11 @@ function createSubs() {
         console.log('(15 Min) Sorted.')
         timeKey = time / 1000
       }
+      ready = true
     })
   } else {
     console.log('Dupes found, not creating.')
+    ready = true
   }
 }
 
@@ -283,8 +286,18 @@ function createMain() {
     removeSubs()
   })
 
+  ipcMain.handle(channels.READY, () => {
+    if (ready) {
+      console.log('Main is ready.')
+    } else {
+      console.log("Main isn't ready yet...")
+    }
+    return ready
+  })
+
   ipcMain.handle(channels.GET_FB_DATA, () => {
     console.log('getting data...')
+    ready = false
     return getMapsTimeAndKey()
   })
 
@@ -298,10 +311,4 @@ app.whenReady().then(() => {
 app.on('window-all-closed', () => {
   removeSubs()
   app.quit()
-})
-
-app.on('render-process-gone', (event, webContents, details) => {
-  removeSubs()
-  console.error('The app crashed. Reason: ' + details.reason)
-  app.exit(details.exitCode)
 })
