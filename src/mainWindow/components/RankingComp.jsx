@@ -56,15 +56,30 @@ class RankingComp extends React.Component {
             display: !this.props.isLoading ? '' : 'none',
           }}
         >
-          {this.props.currentPage > 1 && (
+          {this.props.currentPage > 1 ? (
             <Pagination.First
               onClick={() => {
                 this.props.pageFlip(1)
               }}
             />
+          ) : (
+            <Pagination.First
+              disabled
+              onClick={() => {
+                this.props.pageFlip(1)
+              }}
+            />
           )}
-          {this.props.currentPage - 1 >= 1 && (
+          {this.props.currentPage - 1 >= 1 ? (
             <Pagination.Prev
+              onClick={() => {
+                const m1 = this.props.currentPage - 1
+                this.props.pageFlip(m1)
+              }}
+            />
+          ) : (
+            <Pagination.Prev
+              disabled
               onClick={() => {
                 const m1 = this.props.currentPage - 1
                 this.props.pageFlip(m1)
