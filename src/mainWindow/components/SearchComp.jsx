@@ -34,9 +34,9 @@ class SearchComp extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <Button variant="link" className="mx-0 my-0 px-2 py-0">
-          <Search color="black" className="my-1" size={14} />
-        </Button>
+        <a id="aSearch" className="py-1">
+          <Search size={14} id="searchIcon" />
+        </a>
       </React.Fragment>
     )
   }

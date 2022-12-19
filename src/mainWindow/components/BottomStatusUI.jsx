@@ -13,18 +13,19 @@ export default class BottomStatusUI extends React.Component {
     const u = this.props.up
     const tk = this.props.tk
     return (
-      <Stack direction="horizontal">
+      <Stack direction="horizontal" id="bottomStatus">
         <Navbar
           id="statusBar"
           variant="dark"
           bg="secondary"
-          className="w-100 py-1 px-2"
+          fixed="bottom"
+          className="w-100 py-0 px-2"
         >
           <TimerComp
             isLoading={l}
             nextTime={u}
             timeKey={tk}
-            toggle={this.props.toggle}
+            getData={this.props.get}
           />
           <Container></Container>
           <SearchComp />

@@ -12,6 +12,7 @@ import './style/main.css'
 import TopStatusUI from './components/TopStatusUI.jsx'
 
 const root = createRoot(document.getElementById('root'))
+var first = true
 
 document.onreadystatechange = () => {
   if (document.readyState === 'complete') {
@@ -29,6 +30,11 @@ const App = () => {
   const [list, setList] = useState([])
   const [page, setPage] = useState(1)
 
+  if (first) {
+    getFBData()
+    first = false
+  }
+
   async function getFBData() {
     if (!isLoading) {
       setLoading(true)
@@ -43,27 +49,11 @@ const App = () => {
     }
   }
 
-  window.TRBack.subscriptionWatcher(() => {
-    console.log('Subwatch called.')
-    getFBData()
-  })
-
-  useEffect(() => {
-    setLoading(true)
-    console.log(page)
-    setList(updateList())
-    setLoading(false)
-  }, [page])
-
   useEffect(() => {
     setLoading(true)
     console.log('Updating list.')
     updateList()
     setLoading(false)
-  }, [maps])
-
-  useEffect(() => {
-    console.log(timeKey)
   }, [timeKey])
 
   function updateList() {
@@ -126,7 +116,7 @@ const App = () => {
   }
 
   return (
-    <div className="vh-100 d-flex flex-column">
+    <div id="UI">
       <TopStatusUI />
       <MainUI
         load={isLoading}
@@ -139,7 +129,7 @@ const App = () => {
         up={update}
         load={isLoading}
         tk={timeKey}
-        toggle={setLoading}
+        get={getFBData}
       />
     </div>
   )

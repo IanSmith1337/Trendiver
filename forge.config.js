@@ -45,14 +45,6 @@ module.exports = {
               js: './src/loadingWindow/loadRenderer.js',
               name: 'loader',
             },
-            {
-              html: './src/helper/public/helper.html',
-              js: './src/helper/helperRenderer.js',
-              name: 'bg',
-              preload: {
-                js: './src/helper/helperPreload.js',
-              },
-            },
           ],
         },
       },

@@ -9,16 +9,14 @@ export default class TopStatusUI extends React.Component {
   }
 
   render() {
-    const l = this.props.load
-    const u = this.props.up
-    const tk = this.props.tk
     return (
-      <Stack direction="horizontal">
+      <Stack direction="horizontal" id="topStatus">
         <Navbar
           id="statusBar"
           variant="dark"
           bg="secondary"
-          className="w-100 py-3 px-2"
+          fixed="top"
+          className="w-100 py-0"
         ></Navbar>
       </Stack>
     )

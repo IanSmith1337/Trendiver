@@ -11,19 +11,17 @@ class TimerComp extends React.Component {
   render() {
     return (
       <>
+        <span className="text-nowrap pe-1">Next update: </span>
         {this.props.nextTime > 0 && (
           <Countdown
             style={{
-              display: !this.props.isLoading ? 'block' : 'none',
+              display: !this.props.isLoading ? '' : 'none',
             }}
-            className="px-1 py-0 my-0"
+            className="py-1"
             date={this.props.nextTime}
             key={this.props.timeKey}
             onComplete={() => {
-              console.log('Complete fired.')
-              if (!this.props.isLoading) {
-                this.props.toggle()
-              }
+              this.props.getData()
             }}
           ></Countdown>
         )}

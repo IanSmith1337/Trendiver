@@ -1,7 +1,12 @@
-#searchBar {
-  border-radius: 0 0 0 0.375rem;
+body {
+  color: white;
 }
 
-#titleBar {
-  border-radius: 0 0 0.375rem 0;
+#statusBar {
+  height: 35px;
+}
+
+#ranking {
+  box-sizing: content-box;
+  top: 35px;
 }

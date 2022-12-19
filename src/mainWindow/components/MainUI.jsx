@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import DBReader from './DBReader.jsx'
+import RankingComp from './RankingComp.jsx'
 import SearchComp from './SearchComp.jsx'
 import LoadingComp from './LoadingComp.jsx'
 import TimerComp from './TimerComp.jsx'
 import { Navbar, Container, Stack } from 'react-bootstrap'
+import WindowComp from './WindowComp.jsx'
 
 export default class MainUI extends React.Component {
   constructor(props) {
@@ -17,16 +18,16 @@ export default class MainUI extends React.Component {
     const cp = this.props.page
     const m = this.props.maps
     return (
-      <div id="mainViewport" className="d-flex flex-column flex-fill p-2">
+      <WindowComp name="ranking">
         <LoadingComp isLoading={l}></LoadingComp>
-        <DBReader
+        <RankingComp
           isLoading={l}
           list={list}
           pageFlip={pf}
           currentPage={cp}
           maps={m}
         />
-      </div>
+      </WindowComp>
     )
   }
 }

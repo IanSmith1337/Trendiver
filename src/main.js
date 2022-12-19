@@ -213,11 +213,9 @@ function createSubs() {
         console.log('(15 Min) Sorted.')
         timeKey = time / 1000
       }
-      mainWindow.webContents.send(channels.SUBSCRIPTION_UPDATE)
     })
   } else {
     console.log('Dupes found, not creating.')
-    mainWindow.webContents.send(channels.SUBSCRIPTION_UPDATE)
   }
 }
 
