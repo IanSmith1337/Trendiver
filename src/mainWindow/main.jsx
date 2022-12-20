@@ -1,9 +1,4 @@
-import React, {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useState,
-} from 'react'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
 import MainUI from './components/MainUI.jsx'
 import BottomStatusUI from './components/BottomStatusUI.jsx'
 import { createRoot } from 'react-dom/client'
@@ -13,14 +8,7 @@ import TopStatusUI from './components/TopStatusUI.jsx'
 
 const root = createRoot(document.getElementById('root'))
 var first = true
-
-document.onreadystatechange = () => {
-  if (document.readyState === 'complete') {
-    console.log('Send time: ' + new Date())
-    window.TRBack.subscribe()
-    window.TRBack.loadComplete()
-  }
-}
+window.TRBack.subscribe()
 
 const App = () => {
   const [isLoading, setLoading] = useState(true)
@@ -30,37 +18,46 @@ const App = () => {
   const [list, setList] = useState([])
   const [page, setPage] = useState(1)
 
-  if (first) {
-    getFBData()
-    first = false
-  }
-
   async function getFBData() {
-    if (!isLoading) {
-      setLoading(true)
-    }
-    var ready = false
-    do {
-      ready = await window.TRBack.getReady()
-      await new Promise((r) => setTimeout(r, 1000))
-    } while (!ready)
-    const data = await window.TRBack.getDataFromFB()
-    console.log(data)
-    setPage(1)
-    setMaps(data[0])
-    setUpdate(data[1])
-    setTimeKey(data[2])
-    if (isLoading) {
-      setLoading(false)
-    }
+    await window.TRBack.waitForReady().then(async () => {
+      console.log('ready')
+      await window.TRBack.getDataFromFB().then((data) => {
+        window.TRBack.resetReady()
+        console.log(data)
+        setMaps(data[0])
+        setUpdate(data[1])
+        setTimeKey(data[2])
+        console.log(page)
+        console.log(page != 1)
+        if (page != 1) {
+          setPage(1)
+        }
+      })
+    })
   }
 
   useEffect(() => {
-    setLoading(true)
-    console.log('Updating list.')
-    updateList()
-    setLoading(false)
-  }, [update, page])
+    if (!first) {
+      console.log('Page update call')
+      getFBData()
+    }
+  }, [page])
+
+  useEffect(() => {
+    if (!first) {
+      console.log('List call')
+      setLoading(true)
+      console.log('Updating list.')
+      updateList()
+      setLoading(false)
+    }
+  }, [timeKey, page])
+
+  useEffect(() => {
+    console.log('1st load call')
+    getFBData()
+    first = false
+  }, [])
 
   function updateList() {
     if (maps[2].size !== null && (maps[2].size > 15 || page - 1 > 0)) {
@@ -142,3 +139,4 @@ const App = () => {
 }
 
 root.render(<App />)
+window.TRBack.loadComplete()

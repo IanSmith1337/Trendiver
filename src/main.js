@@ -1,7 +1,5 @@
 const { channels } = require('../src/shared/constants.js')
 const { app, BrowserWindow, ipcMain } = require('electron')
-const { path } = require('path')
-const { fs } = require('fs')
 const { initializeApp } = require('firebase/app')
 const {
   getFirestore,
@@ -11,6 +9,7 @@ const {
   orderBy,
   limit,
 } = require('firebase/firestore')
+require('fs')
 
 // Firebase Config
 const config = {
@@ -224,6 +223,7 @@ function createSubs() {
 
 function removeSubs() {
   if (stop60 !== null || stop30 !== null || stop15 !== null) {
+    console.log('Removing subscriptions')
     stop60()
     stop30()
     stop15()
@@ -247,6 +247,7 @@ function createAndShowLoading() {
   })
 
   loader.loadURL(LOADER_WEBPACK_ENTRY)
+
   loader.webContents.once('dom-ready', () => {
     loader.show()
     ipcMain.once(channels.LOAD_COMPLETE, () => {
@@ -265,16 +266,13 @@ function createMain() {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
       nodeIntegration: true,
     },
+    show: false,
     titleBarStyle: 'hidden',
   })
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
 
-  console.log('cleaning listeners')
-
-  ipcMain.removeAllListeners(channels.SUBSCRIBE)
-  ipcMain.removeAllListeners(channels.GET_FB_DATA)
-  mainWindow.removeAllListeners('close')
+  console.log('Listener init')
 
   ipcMain.on(channels.SUBSCRIBE, () => {
     console.log('Attaching subscriptions')
@@ -282,24 +280,29 @@ function createMain() {
   })
 
   mainWindow.on('close', () => {
-    console.log('removing subscriptions.')
     removeSubs()
   })
 
-  ipcMain.handle(channels.READY, () => {
-    if (ready) {
-      console.log('Main is ready.')
-    } else {
-      console.log("Main isn't ready yet...")
+  ipcMain.handle(channels.READY, async () => {
+    console.log('Waiting for subscription ready signal')
+    while (!ready) {
+      await new Promise((r) => setTimeout(r, 50))
     }
-    return ready
+    console.log('Ready!')
+    return
   })
 
   ipcMain.handle(channels.GET_FB_DATA, () => {
-    console.log('getting data...')
-    ready = false
+    console.log('Getting data')
     return getMapsTimeAndKey()
   })
+
+  ipcMain.on(channels.RESET, () => {
+    console.log('Resetting ready state')
+    ready = false
+  })
+
+  console.log('Window created, returning')
 
   return mainWindow
 }
