@@ -25,6 +25,7 @@ export default class BottomStatusUI extends React.Component {
             isLoading={l}
             nextTime={u}
             timeKey={tk}
+            setT={this.props.ST}
             getData={this.props.get}
           />
           <Container></Container>

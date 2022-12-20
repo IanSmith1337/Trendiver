@@ -21,7 +21,7 @@ class TimerComp extends React.Component {
             date={this.props.nextTime}
             key={this.props.timeKey}
             onComplete={() => {
-              this.props.getData()
+              this.props.setT(true)
             }}
           ></Countdown>
         )}

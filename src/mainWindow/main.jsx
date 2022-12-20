@@ -16,7 +16,8 @@ const App = () => {
   const [update, setUpdate] = useState(0)
   const [maps, setMaps] = useState([new Map(), new Map(), new Map()])
   const [list, setList] = useState([])
-  const [page, setPage] = useState(1)
+  const [page, setPage] = useState(0)
+  const [timer, setTimer] = useState(false)
 
   async function getFBData() {
     await window.TRBack.waitForReady().then(async () => {
@@ -27,8 +28,6 @@ const App = () => {
         setMaps(data[0])
         setUpdate(data[1])
         setTimeKey(data[2])
-        console.log(page)
-        console.log(page != 1)
         if (page != 1) {
           setPage(1)
         }
@@ -39,19 +38,23 @@ const App = () => {
   useEffect(() => {
     if (!first) {
       console.log('Page update call')
-      getFBData()
-    }
-  }, [page])
-
-  useEffect(() => {
-    if (!first) {
-      console.log('List call')
       setLoading(true)
       console.log('Updating list.')
       updateList()
       setLoading(false)
     }
-  }, [timeKey, page])
+  }, [page])
+
+  useEffect(() => {
+    if (!first) {
+      console.log('Timer call')
+      setLoading(true)
+      getFBData()
+      console.log('Updating list.')
+      updateList()
+      setLoading(false)
+    }
+  }, [timer])
 
   useEffect(() => {
     console.log('1st load call')
@@ -132,6 +135,7 @@ const App = () => {
         up={update}
         load={isLoading}
         tk={timeKey}
+        ST={setTimer}
         get={getFBData}
       />
     </div>
