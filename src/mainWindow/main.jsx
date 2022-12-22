@@ -1,10 +1,11 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import MainUI from './components/MainUI.jsx'
 import BottomStatusUI from './components/BottomStatusUI.jsx'
 import { createRoot } from 'react-dom/client'
 import '../../scss/custom.scss'
 import './style/main.css'
 import TopStatusUI from './components/TopStatusUI.jsx'
+import LoadingComp from './components/LoadingComp.jsx'
 
 const root = createRoot(document.getElementById('root'))
 var first = true
@@ -50,9 +51,6 @@ const App = () => {
       console.log('Timer call')
       setLoading(true)
       getFBData()
-      console.log('Updating list.')
-      updateList()
-      setLoading(false)
     }
   }, [timer])
 
@@ -124,6 +122,7 @@ const App = () => {
   return (
     <div id="UI">
       <TopStatusUI />
+      <LoadingComp isLoading={isLoading}></LoadingComp>
       <MainUI
         load={isLoading}
         list={list}
@@ -137,6 +136,7 @@ const App = () => {
         tk={timeKey}
         ST={setTimer}
         get={getFBData}
+        getT={timer}
       />
     </div>
   )

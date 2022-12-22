@@ -1,5 +1,20 @@
 body {
   color: white;
+  background-repeat: no-repeat;
+  background: rgb(0, 8, 14);
+  background: linear-gradient(
+    0deg,
+    rgba(0, 8, 14, 1) 0%,
+    rgba(0, 25, 42, 1) 41%,
+    rgba(0, 43, 85, 1) 59%,
+    rgba(0, 53, 98, 1) 64%,
+    rgba(0, 60, 106, 1) 70%,
+    rgba(0, 63, 121, 1) 75%,
+    rgba(0, 141, 203, 1) 90%,
+    rgba(0, 193, 234, 1) 98%,
+    rgba(198, 226, 241, 1) 100%
+  );
+  height: 100vmin;
 }
 
 #statusBar {
@@ -7,6 +22,8 @@ body {
 }
 
 #ranking {
-  box-sizing: content-box;
-  top: 35px;
+  box-sizing: border-box;
+  width: 100%;
+  height: 50vh;
+  top: calc(50vh - 35px);
 }

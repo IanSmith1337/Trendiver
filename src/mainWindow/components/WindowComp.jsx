@@ -9,7 +9,7 @@ export default class WindowComp extends React.Component {
     return (
       <div
         id={this.props.name}
-        className="position-relative p-2 overflow-hidden border-1"
+        className="position-relative p-2 overflow-auto border border-1"
       >
         {this.props.children}
       </div>
