@@ -29,9 +29,7 @@ const App = () => {
         setMaps(data[0])
         setUpdate(data[1])
         setTimeKey(data[2])
-        if (page != 1) {
-          setPage(1)
-        }
+        setPage(1)
       })
     })
   }
@@ -39,12 +37,11 @@ const App = () => {
   useEffect(() => {
     if (!first) {
       console.log('Page update call')
-      setLoading(true)
       console.log('Updating list.')
       updateList()
       setLoading(false)
     }
-  }, [page])
+  }, [page, timeKey])
 
   useEffect(() => {
     if (!first) {
@@ -56,7 +53,11 @@ const App = () => {
 
   useEffect(() => {
     console.log('1st load call')
+    setLoading(true)
     getFBData()
+    console.log('Updating list.')
+    updateList()
+    setLoading(false)
     first = false
   }, [])
 
