@@ -7,10 +7,7 @@ export default class WindowComp extends React.Component {
 
   render() {
     return (
-      <div
-        id={this.props.name}
-        className="position-relative p-2 overflow-auto border border-1"
-      >
+      <div id={this.props.name} className="position-relative p-2 overflow-auto">
         {this.props.children}
       </div>
     )

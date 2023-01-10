@@ -5,7 +5,6 @@ import { createRoot } from 'react-dom/client'
 import '../../scss/custom.scss'
 import './style/main.css'
 import TopStatusUI from './components/TopStatusUI.jsx'
-import LoadingComp from './components/LoadingComp.jsx'
 
 const root = createRoot(document.getElementById('root'))
 var first = true
@@ -36,6 +35,8 @@ const App = () => {
 
   useEffect(() => {
     if (!first) {
+      setLoading(true)
+      console.log(isLoading)
       console.log('Page update call')
       console.log('Updating list.')
       updateList()
@@ -57,7 +58,6 @@ const App = () => {
     getFBData()
     console.log('Updating list.')
     updateList()
-    setLoading(false)
     first = false
   }, [])
 
@@ -123,7 +123,6 @@ const App = () => {
   return (
     <div id="UI">
       <TopStatusUI />
-      <LoadingComp isLoading={isLoading}></LoadingComp>
       <MainUI
         load={isLoading}
         list={list}

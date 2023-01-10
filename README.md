@@ -10,8 +10,10 @@ Front-end developed in React and Electron, with styling in Bootstrap CSS.
 
 ## TODO
 
-Update backend to use IPC
 Update UI
+
 Add Dynamic pages for all tags
+
 Add charts
+
 Implement search

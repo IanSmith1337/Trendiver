@@ -17,7 +17,6 @@ export default class BottomStatusUI extends React.Component {
         <Navbar
           id="statusBar"
           variant="dark"
-          bg="secondary"
           fixed="bottom"
           className="w-100 py-0 px-2"
         >

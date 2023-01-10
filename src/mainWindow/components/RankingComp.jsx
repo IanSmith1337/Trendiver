@@ -10,12 +10,7 @@ class RankingComp extends React.Component {
     return (
       <>
         <div id="rankingDisplay">
-          <div
-            id="RDdata"
-            style={{
-              display: !this.props.isLoading ? '' : 'none',
-            }}
-          >
+          <div id="RDdata">
             <table id="dataRoot">
               <thead>
                 <tr>
@@ -50,12 +45,7 @@ class RankingComp extends React.Component {
             </table>
           </div>
         </div>
-        <Pagination
-          id="pagination"
-          style={{
-            display: !this.props.isLoading ? '' : 'none',
-          }}
-        >
+        <Pagination id="pagination">
           {this.props.currentPage > 1 ? (
             <Pagination.First
               onClick={() => {

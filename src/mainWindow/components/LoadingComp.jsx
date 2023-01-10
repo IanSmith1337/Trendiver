@@ -11,7 +11,6 @@ class LoadingComp extends React.Component {
     return (
       <div
         className="spin"
-        style={{ display: this.props.isLoading ? 'flex' : 'none' }}
         id="loading"
       >
         <div>

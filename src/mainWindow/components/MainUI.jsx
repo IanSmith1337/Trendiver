@@ -1,5 +1,6 @@
 import React from 'react'
 import RankingComp from './RankingComp.jsx'
+import LoadingComp from './LoadingComp.jsx'
 import WindowComp from './WindowComp.jsx'
 
 export default class MainUI extends React.Component {
@@ -15,13 +16,17 @@ export default class MainUI extends React.Component {
     const m = this.props.maps
     return (
       <WindowComp name="ranking">
-        <RankingComp
-          isLoading={l}
-          list={list}
-          pageFlip={pf}
-          currentPage={cp}
-          maps={m}
-        />
+        {l ? (
+          <LoadingComp isLoading={l}></LoadingComp>
+        ) : (
+          <RankingComp
+            isLoading={l}
+            list={list}
+            pageFlip={pf}
+            currentPage={cp}
+            maps={m}
+          />
+        )}
       </WindowComp>
     )
   }
